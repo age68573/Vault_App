@@ -2,7 +2,7 @@
    Vault MongoDB 動態憑證展示 — 自訂樣式（Tabler 版）
    ========================================================= */
 
-/* 頁面整體佈局：確保 footer 貼底 */
+/* 頁面整體：footer 貼底 */
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -11,9 +11,15 @@
 
 .page-wrapper {
   flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* 導覽列 TTL 徽章到期閃爍 */
+.page-body {
+  flex: 1;
+}
+
+/* Token TTL 徽章到期閃爍 */
 #tokenTtl.bg-danger {
   animation: ttl-blink 1s ease-in-out infinite;
 }
@@ -23,45 +29,39 @@
   50%       { opacity: 0.5; }
 }
 
-/* Monospace 字型統一 */
-.font-monospace {
-  font-size: 0.85rem;
+/* 快速功能卡片 hover */
+.card-link-pop {
+  transition: transform .15s ease, box-shadow .15s ease;
+  text-decoration: none;
+  color: inherit;
+}
+.card-link-pop:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--tblr-box-shadow-sm);
+  color: inherit;
 }
 
-/* 資料瀏覽器：Collection 側欄最大寬度 */
-@media (min-width: 768px) {
-  .col-md-3.col-lg-2 {
-    max-width: 220px;
-  }
-}
-
-/* 表格中 JSON 文字換行 */
-.text-break {
-  word-break: break-all;
-  white-space: pre-wrap;
-}
-
-/* 密碼輸入框字距 */
-#credPassword {
-  letter-spacing: 0.1em;
-}
-
-/* Tabler progress-sm 高度微調 */
-.progress.progress-sm {
-  height: 6px;
-}
-
-/* 資料瀏覽器：JSON 文件顯示區塊 */
+/* JSON 文件顯示區塊 */
 code.json-block {
   display: block;
   font-family: var(--tblr-font-monospace, monospace);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   background-color: var(--tblr-bg-surface-secondary, #f6f8fb);
   border: 1px solid var(--tblr-border-color, #e6e7e9);
   border-radius: var(--tblr-border-radius, 4px);
-  padding: 0.45rem 0.65rem;
+  padding: 0.4rem 0.6rem;
   color: var(--tblr-body-color, #1d273b);
   white-space: pre-wrap;
   word-break: break-all;
   max-width: 640px;
+}
+
+/* 密碼輸入框字距 */
+#credPassword {
+  letter-spacing: 0.08em;
+}
+
+/* progress-sm */
+.progress.progress-sm {
+  height: 4px;
 }

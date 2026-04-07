@@ -1,10 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%--
-  共用頁首片段：Tabler 標準頂部導覽列
-  使用方式：<%@ include file="_header.jsp" %>
-  需要 Session 中存在 vaultUsername 與 vaultToken。
---%>
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -22,13 +17,11 @@
 <header class="navbar navbar-expand-lg d-print-none">
   <div class="container-fluid">
 
-    <%-- 品牌 --%>
     <a class="navbar-brand" href="${pageContext.request.contextPath}/dashboard">
       <i class="bi bi-shield-lock-fill text-warning me-2"></i>
       <span class="fw-bold">Vault MongoDB 展示</span>
     </a>
 
-    <%-- 行動版切換 --%>
     <button class="navbar-toggler" type="button"
             data-bs-toggle="collapse" data-bs-target="#navbar-menu"
             aria-controls="navbar-menu" aria-expanded="false">
@@ -37,7 +30,6 @@
 
     <div class="collapse navbar-collapse" id="navbar-menu">
 
-      <%-- 主導覽連結 --%>
       <ul class="navbar-nav">
         <li class="nav-item">
           <a class="nav-link <c:if test='${currentPage == "dashboard"}'>active</c:if>"
@@ -76,28 +68,36 @@
         </li>
       </ul>
 
-      <%-- 右側：TTL + 使用者 --%>
-      <div class="navbar-nav flex-row order-lg-last ms-auto align-items-center gap-3">
+      <div class="navbar-nav flex-row order-lg-last ms-auto align-items-center gap-2">
 
-        <%-- Token TTL 倒數 --%>
+        <%-- Token TTL --%>
         <c:if test="${not empty sessionScope.vaultToken}">
           <c:set var="remainTtl" value="${sessionScope.vaultToken.remainingTtlSeconds}"/>
           <c:set var="totalTtl"  value="${sessionScope.vaultToken.ttl}"/>
-          <div class="d-none d-lg-flex flex-column align-items-center" style="min-width:80px;">
-            <div class="d-flex align-items-center gap-1 mb-1">
-              <i class="bi bi-clock text-muted" style="font-size:0.75rem;"></i>
-              <span class="text-muted" style="font-size:0.72rem;">Token TTL</span>
+          <div class="d-none d-lg-block me-2" style="min-width:90px;">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="text-muted" style="font-size:0.7rem; letter-spacing:.04em; text-transform:uppercase;">Token TTL</span>
               <span id="tokenTtl"
                     data-ttl="${remainTtl}"
                     data-bar="tokenTtlBar"
-                    class="badge ms-1 <c:choose><c:when test='${remainTtl > 300}'>bg-success</c:when><c:when test='${remainTtl > 60}'>bg-warning text-dark</c:when><c:otherwise>bg-danger</c:otherwise></c:choose>"
-                    style="font-size:0.7rem;">
-                <c:out value="${remainTtl}"/>秒
+                    class="badge badge-sm ms-1
+                      <c:choose>
+                        <c:when test='${remainTtl > 300}'>bg-success</c:when>
+                        <c:when test='${remainTtl > 60}'>bg-warning text-dark</c:when>
+                        <c:otherwise>bg-danger</c:otherwise>
+                      </c:choose>"
+                    style="font-size:0.65rem;">
+                <c:out value="${remainTtl}"/>s
               </span>
             </div>
-            <div class="progress w-100" style="height:3px;">
+            <div class="progress" style="height:3px;">
               <div id="tokenTtlBar"
-                   class="progress-bar <c:choose><c:when test='${remainTtl > 300}'>bg-success</c:when><c:when test='${remainTtl > 60}'>bg-warning</c:when><c:otherwise>bg-danger</c:otherwise></c:choose>"
+                   class="progress-bar
+                     <c:choose>
+                       <c:when test='${remainTtl > 300}'>bg-success</c:when>
+                       <c:when test='${remainTtl > 60}'>bg-warning</c:when>
+                       <c:otherwise>bg-danger</c:otherwise>
+                     </c:choose>"
                    role="progressbar"
                    data-total="${totalTtl}"
                    style="width:${remainTtl * 100 / (totalTtl > 0 ? totalTtl : 1)}%">
@@ -110,15 +110,15 @@
         <c:if test="${not empty sessionScope.vaultUsername}">
           <div class="nav-item dropdown">
             <a href="#" class="nav-link d-flex lh-1 text-reset p-0"
-               data-bs-toggle="dropdown" aria-label="開啟使用者選單">
+               data-bs-toggle="dropdown" aria-label="使用者選單">
               <span class="avatar avatar-sm bg-primary-lt text-primary">
                 <i class="bi bi-person-fill"></i>
               </span>
               <div class="d-none d-xl-block ps-2 lh-1">
-                <div class="fw-semibold" style="font-size:0.875rem; line-height:1.2;">
+                <div class="fw-semibold" style="font-size:0.875rem; line-height:1.3;">
                   <c:out value="${sessionScope.vaultUsername}"/>
                 </div>
-                <div class="text-muted mt-1" style="font-size:0.72rem;">Vault 使用者</div>
+                <div class="text-muted" style="font-size:0.72rem; margin-top:2px;">Vault 使用者</div>
               </div>
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow-sm">
@@ -128,7 +128,7 @@
               <div class="dropdown-divider m-0"></div>
               <form method="post" action="${pageContext.request.contextPath}/logout">
                 <button type="submit" class="dropdown-item text-danger"
-                        onclick="return confirm('確定要登出？Token 底下的 Lease 將繼續有效直到 TTL 到期。')">
+                        onclick="return confirm('確定要登出？')">
                   <i class="bi bi-box-arrow-right me-2"></i>登出
                 </button>
               </form>

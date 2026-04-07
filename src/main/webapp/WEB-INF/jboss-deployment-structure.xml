@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+  <deployment>
+    <exclusions>
+      <!--
+        排除 JBoss EAP 8 內建的 Jackson 模組，
+        避免與 WAR 中自行打包的 Jackson 2.16 產生類別衝突。
+      -->
+      <module name="com.fasterxml.jackson.core.jackson-core"/>
+      <module name="com.fasterxml.jackson.core.jackson-databind"/>
+      <module name="com.fasterxml.jackson.core.jackson-annotations"/>
+      <module name="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider"/>
+
+      <!--
+        排除 JBoss 的 SLF4J 橋接模組，
+        使用 WAR 中自行打包的 Logback 進行應用程式日誌。
+      -->
+      <module name="org.slf4j"/>
+      <module name="org.slf4j.impl"/>
+    </exclusions>
+
+    <dependencies>
+      <!-- 允許使用 JBoss 提供的 CDI (Weld) -->
+      <module name="jakarta.enterprise.api"/>
+      <!-- 允許使用 JBoss 提供的 Servlet API -->
+      <module name="jakarta.servlet.api"/>
+    </dependencies>
+  </deployment>
+</jboss-deployment-structure>

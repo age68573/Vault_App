@@ -39,13 +39,13 @@
     <div class="collapse navbar-collapse" id="navbar-menu">
 
       <%-- 右側使用者資訊（優先顯示） --%>
-      <div class="navbar-nav flex-row order-md-last ms-auto">
+      <div class="navbar-nav flex-row order-md-last">
 
         <%-- Token TTL 倒數 --%>
         <c:if test="${not empty sessionScope.vaultToken}">
-          <div class="nav-item d-flex align-items-center me-3">
-            <span class="nav-link d-flex align-items-center gap-2 pe-0">
-              <i class="bi bi-clock text-muted"></i>
+          <div class="nav-item d-none d-md-flex align-items-center me-3">
+            <span class="d-flex align-items-center gap-2">
+              <i class="bi bi-clock text-muted" style="font-size:0.9rem;"></i>
               <span class="text-muted small">TTL</span>
               <span id="tokenTtl"
                     data-ttl="${sessionScope.vaultToken.remainingTtlSeconds}"
@@ -53,7 +53,7 @@
                     class="badge bg-success">
                 <c:out value="${sessionScope.vaultToken.remainingTtlSeconds}"/>秒
               </span>
-              <div class="progress ms-1" style="height:4px;width:64px;">
+              <div class="progress" style="height:4px;width:60px;">
                 <div id="tokenTtlBar"
                      class="progress-bar bg-success"
                      role="progressbar"
@@ -65,23 +65,33 @@
           </div>
         </c:if>
 
-        <%-- 使用者選單 --%>
+        <%-- 分隔線 --%>
+        <c:if test="${not empty sessionScope.vaultUsername}">
+          <div class="d-none d-md-flex align-items-center me-3">
+            <div class="vr"></div>
+          </div>
+        </c:if>
+
+        <%-- 使用者下拉選單 --%>
         <c:if test="${not empty sessionScope.vaultUsername}">
           <div class="nav-item dropdown">
-            <a href="#" class="nav-link d-flex lh-1 text-reset p-0 pe-2"
+            <a href="#" class="nav-link d-flex lh-1 text-reset p-0"
                data-bs-toggle="dropdown" aria-label="開啟使用者選單">
-              <span class="avatar avatar-sm"
-                    style="background-color:var(--tblr-primary);">
-                <i class="bi bi-person-fill text-white"></i>
+              <span class="avatar avatar-sm bg-primary-lt text-primary">
+                <i class="bi bi-person-fill"></i>
               </span>
-              <div class="d-none d-xl-block ps-2">
-                <div class="fw-semibold lh-1">
+              <div class="d-none d-xl-block ps-2 lh-1">
+                <div class="fw-semibold" style="font-size:0.875rem;">
                   <c:out value="${sessionScope.vaultUsername}"/>
                 </div>
-                <div class="mt-1 small text-muted">Vault 使用者</div>
+                <div class="text-muted mt-1" style="font-size:0.75rem;">Vault 使用者</div>
               </div>
             </a>
-            <div class="dropdown-menu dropdown-menu-end shadow">
+            <div class="dropdown-menu dropdown-menu-end shadow-sm">
+              <div class="dropdown-header small text-muted">
+                <i class="bi bi-shield-check me-1"></i>已驗證身份
+              </div>
+              <div class="dropdown-divider"></div>
               <form method="post" action="${pageContext.request.contextPath}/logout">
                 <button type="submit" class="dropdown-item text-danger"
                         onclick="return confirm('確定要登出？Token 底下的 Lease 將繼續有效直到 TTL 到期。')">
@@ -91,6 +101,7 @@
             </div>
           </div>
         </c:if>
+
       </div>
 
       <%-- 主導覽連結 --%>

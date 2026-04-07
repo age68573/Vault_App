@@ -45,6 +45,7 @@ public class DashboardServlet extends HttpServlet {
         VaultToken     token    = (VaultToken) session.getAttribute("vaultToken");
         String         username = (String) session.getAttribute("vaultUsername");
         DynamicCredential cred = (DynamicCredential) session.getAttribute("currentCred");
+        LOG.debug("Dashboard 開始處理：username={}, token={}", username, token != null ? token.getAccessor() : "null");
 
         // 向 Vault 取得最新的 Token 資訊（更新 TTL）
         try {
@@ -85,6 +86,17 @@ public class DashboardServlet extends HttpServlet {
         req.setAttribute("currentCred",  cred);
         req.setAttribute("leaseCount",   leases.size());
 
+        LOG.debug("Dashboard 渲染前：token={}, leases={}, connStatus={}", token, leases.size(), connStatus);
         req.getRequestDispatcher("/WEB-INF/views/dashboard.jsp").forward(req, resp);
     }
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        LOG.info("DashboardServlet 初始化完成，vaultService={}, mongoService={}, auditLog={}",
+                vaultService, mongoService, auditLog);
+    }
+
+    private static final org.slf4j.Logger LOG =
+            org.slf4j.LoggerFactory.getLogger(DashboardServlet.class);
 }

@@ -50,3 +50,18 @@
 .progress.progress-sm {
   height: 6px;
 }
+
+/* 資料瀏覽器：JSON 文件顯示區塊 */
+code.json-block {
+  display: block;
+  font-family: var(--tblr-font-monospace, monospace);
+  font-size: 0.82rem;
+  background-color: var(--tblr-bg-surface-secondary, #f6f8fb);
+  border: 1px solid var(--tblr-border-color, #e6e7e9);
+  border-radius: var(--tblr-border-radius, 4px);
+  padding: 0.45rem 0.65rem;
+  color: var(--tblr-body-color, #1d273b);
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-width: 640px;
+}

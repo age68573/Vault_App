@@ -65,8 +65,8 @@
       <%-- 左側：Collection 清單 --%>
       <div class="col-md-3 col-lg-2">
         <div class="card mb-3">
-          <div class="card-header bg-success-lt">
-            <h4 class="card-title mb-0 small fw-semibold text-success">
+          <div class="card-header bg-success text-white">
+            <h4 class="card-title mb-0 small fw-semibold">
               <i class="bi bi-collection me-1"></i>Collections
             </h4>
           </div>
@@ -118,11 +118,11 @@
             <%-- 查詢列 --%>
             <div class="card mb-3">
               <div class="card-header" style="background:#1a1a2e; color:#fff;">
-                <h4 class="card-title mb-0 small">
-                  <i class="bi bi-search me-2"></i>
+                <h4 class="card-title mb-0 small d-flex align-items-center gap-2">
+                  <i class="bi bi-search"></i>
                   查詢：<span class="font-monospace"><c:out value="${selectedCollection}"/></span>
-                  <span class="badge bg-secondary ms-2">
-                    <c:out value="${documentCount}"/>筆結果
+                  <span class="badge bg-white text-dark border">
+                    <c:out value="${documentCount}"/> 筆結果
                   </span>
                 </h4>
               </div>
@@ -170,10 +170,10 @@
                         <c:forEach var="doc" items="${documents}" varStatus="status">
                           <tr>
                             <td class="text-muted small"><c:out value="${status.index + 1}"/></td>
-                            <td class="small font-monospace">
-                              <span class="text-break" style="max-width:600px; display:block;">
+                            <td class="text-start">
+                              <code class="json-block">
                                 <c:out value="${doc}"/>
-                              </span>
+                              </code>
                             </td>
                             <td class="text-center">
                               <form method="post"

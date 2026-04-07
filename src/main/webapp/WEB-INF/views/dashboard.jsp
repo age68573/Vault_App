@@ -61,29 +61,41 @@
                     </td>
                   </tr>
                   <tr>
-                    <td class="text-muted small">剩餘 TTL</td>
+                    <td class="text-muted small" style="vertical-align:top;padding-top:6px;">剩餘 TTL</td>
                     <td>
-                      <c:set var="ttl" value="${token.remainingTtlSeconds}"/>
+                      <c:set var="ttl"      value="${token.remainingTtlSeconds}"/>
+                      <c:set var="totalTtl" value="${token.ttl}"/>
+                      <%-- 時間文字徽章 --%>
                       <c:choose>
                         <c:when test="${ttl > 300}">
-                          <span class="badge bg-success fs-6"
+                          <span class="badge bg-success fs-6 mb-2"
                                 id="dashTtl" data-ttl="${ttl}">
                             <c:out value="${ttl}"/>秒
                           </span>
                         </c:when>
                         <c:when test="${ttl > 60}">
-                          <span class="badge bg-warning text-dark fs-6"
+                          <span class="badge bg-warning text-dark fs-6 mb-2"
                                 id="dashTtl" data-ttl="${ttl}">
                             <c:out value="${ttl}"/>秒
                           </span>
                         </c:when>
                         <c:otherwise>
-                          <span class="badge bg-danger fs-6"
+                          <span class="badge bg-danger fs-6 mb-2"
                                 id="dashTtl" data-ttl="${ttl}">
                             <c:out value="${ttl}"/>秒（即將到期）
                           </span>
                         </c:otherwise>
                       </c:choose>
+                      <%-- 進度條 --%>
+                      <div class="progress" style="height:8px;"
+                           title="剩餘 ${ttl} 秒 / 共 ${totalTtl} 秒">
+                        <div id="dashTtlBar"
+                             class="progress-bar"
+                             role="progressbar"
+                             data-total="${totalTtl}"
+                             style="width:${ttl * 100 / (totalTtl > 0 ? totalTtl : 1)}%">
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 </tbody>

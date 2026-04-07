@@ -45,6 +45,28 @@ function updateBadgeColor(el, ttl) {
 }
 
 /**
+ * 更新進度條寬度與顏色。
+ *
+ * @param {string} barId   進度條元素 ID
+ * @param {number} remaining 剩餘秒數
+ */
+function updateProgressBar(barId, remaining) {
+  const bar = document.getElementById(barId);
+  if (!bar) return;
+  const total = parseInt(bar.getAttribute('data-total'), 10) || 1;
+  const pct = Math.max(0, Math.min(100, (remaining / total) * 100));
+  bar.style.width = pct + '%';
+  bar.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+  if (remaining > 300) {
+    bar.classList.add('bg-success');
+  } else if (remaining > 60) {
+    bar.classList.add('bg-warning');
+  } else {
+    bar.classList.add('bg-danger');
+  }
+}
+
+/**
  * 初始化所有帶有 data-ttl 屬性的元素，啟動倒數計時器。
  */
 function initTtlCountdowns() {
@@ -64,6 +86,11 @@ function initTtlCountdowns() {
       // 導覽列特殊處理：加入格式化顯示
       if (el.id === 'tokenTtl') {
         el.textContent = formatTtl(remaining);
+      }
+
+      // 同步更新對應的進度條
+      if (el.id === 'dashTtl') {
+        updateProgressBar('dashTtlBar', remaining);
       }
 
       // 過期後停止計時並顯示「已過期」

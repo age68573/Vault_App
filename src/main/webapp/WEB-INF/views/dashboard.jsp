@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <c:set var="pageTitle" value="儀表板 — Vault MongoDB 展示" scope="request"/>
 <c:set var="currentPage" value="dashboard" scope="request"/>
 <%@ include file="_header.jsp" %>
@@ -42,7 +41,11 @@
                   </tr>
                   <tr>
                     <td class="text-muted small">政策</td>
-                    <td class="small"><c:out value="${fn:join(token.policies, ', ')}"/></td>
+                    <td class="small">
+                      <c:forEach var="p" items="${token.policies}" varStatus="s">
+                        <c:out value="${p}"/><c:if test="${!s.last}">, </c:if>
+                      </c:forEach>
+                    </td>
                   </tr>
                   <tr>
                     <td class="text-muted small">可續期</td>

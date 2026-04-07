@@ -19,56 +19,90 @@
 <body class="antialiased">
 <div class="wrapper">
 
-<header class="navbar navbar-expand-md d-print-none">
-  <div class="container-xl">
+<header class="navbar navbar-expand-lg d-print-none">
+  <div class="container-fluid">
 
-    <%-- 行動版切換按鈕 --%>
-    <button class="navbar-toggler" type="button"
-            data-bs-toggle="collapse" data-bs-target="#navbar-menu"
-            aria-controls="navbar-menu" aria-expanded="false" aria-label="切換導覽">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <%-- 品牌 Logo --%>
-    <a class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3"
-       href="${pageContext.request.contextPath}/dashboard">
+    <%-- 品牌 --%>
+    <a class="navbar-brand" href="${pageContext.request.contextPath}/dashboard">
       <i class="bi bi-shield-lock-fill text-warning me-2"></i>
       <span class="fw-bold">Vault MongoDB 展示</span>
     </a>
 
+    <%-- 行動版切換 --%>
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navbar-menu"
+            aria-controls="navbar-menu" aria-expanded="false">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
     <div class="collapse navbar-collapse" id="navbar-menu">
 
-      <%-- 右側使用者資訊（優先顯示） --%>
-      <div class="navbar-nav flex-row order-md-last">
+      <%-- 主導覽連結 --%>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link <c:if test='${currentPage == "dashboard"}'>active</c:if>"
+             href="${pageContext.request.contextPath}/dashboard">
+            <span class="nav-link-icon"><i class="bi bi-speedometer2"></i></span>
+            <span class="nav-link-title">儀表板</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <c:if test='${currentPage == "creds"}'>active</c:if>"
+             href="${pageContext.request.contextPath}/creds">
+            <span class="nav-link-icon"><i class="bi bi-key-fill"></i></span>
+            <span class="nav-link-title">動態憑證</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <c:if test='${currentPage == "leases"}'>active</c:if>"
+             href="${pageContext.request.contextPath}/leases">
+            <span class="nav-link-icon"><i class="bi bi-hourglass-split"></i></span>
+            <span class="nav-link-title">Lease 管理</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <c:if test='${currentPage == "data"}'>active</c:if>"
+             href="${pageContext.request.contextPath}/data">
+            <span class="nav-link-icon"><i class="bi bi-database"></i></span>
+            <span class="nav-link-title">資料瀏覽器</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link <c:if test='${currentPage == "audit"}'>active</c:if>"
+             href="${pageContext.request.contextPath}/audit">
+            <span class="nav-link-icon"><i class="bi bi-journal-text"></i></span>
+            <span class="nav-link-title">稽核日誌</span>
+          </a>
+        </li>
+      </ul>
+
+      <%-- 右側：TTL + 使用者 --%>
+      <div class="navbar-nav flex-row order-lg-last ms-auto align-items-center gap-3">
 
         <%-- Token TTL 倒數 --%>
         <c:if test="${not empty sessionScope.vaultToken}">
-          <div class="nav-item d-none d-md-flex align-items-center me-3">
-            <span class="d-flex align-items-center gap-2">
-              <i class="bi bi-clock text-muted" style="font-size:0.9rem;"></i>
-              <span class="text-muted small">TTL</span>
+          <c:set var="remainTtl" value="${sessionScope.vaultToken.remainingTtlSeconds}"/>
+          <c:set var="totalTtl"  value="${sessionScope.vaultToken.ttl}"/>
+          <div class="d-none d-lg-flex flex-column align-items-center" style="min-width:80px;">
+            <div class="d-flex align-items-center gap-1 mb-1">
+              <i class="bi bi-clock text-muted" style="font-size:0.75rem;"></i>
+              <span class="text-muted" style="font-size:0.72rem;">Token TTL</span>
               <span id="tokenTtl"
-                    data-ttl="${sessionScope.vaultToken.remainingTtlSeconds}"
+                    data-ttl="${remainTtl}"
                     data-bar="tokenTtlBar"
-                    class="badge bg-success">
-                <c:out value="${sessionScope.vaultToken.remainingTtlSeconds}"/>秒
+                    class="badge ms-1 <c:choose><c:when test='${remainTtl > 300}'>bg-success</c:when><c:when test='${remainTtl > 60}'>bg-warning text-dark</c:when><c:otherwise>bg-danger</c:otherwise></c:choose>"
+                    style="font-size:0.7rem;">
+                <c:out value="${remainTtl}"/>秒
               </span>
-              <div class="progress" style="height:4px;width:60px;">
-                <div id="tokenTtlBar"
-                     class="progress-bar bg-success"
-                     role="progressbar"
-                     data-total="${sessionScope.vaultToken.ttl}"
-                     style="width:${sessionScope.vaultToken.remainingTtlSeconds * 100 / (sessionScope.vaultToken.ttl > 0 ? sessionScope.vaultToken.ttl : 1)}%">
-                </div>
+            </div>
+            <div class="progress w-100" style="height:3px;">
+              <div id="tokenTtlBar"
+                   class="progress-bar <c:choose><c:when test='${remainTtl > 300}'>bg-success</c:when><c:when test='${remainTtl > 60}'>bg-warning</c:when><c:otherwise>bg-danger</c:otherwise></c:choose>"
+                   role="progressbar"
+                   data-total="${totalTtl}"
+                   style="width:${remainTtl * 100 / (totalTtl > 0 ? totalTtl : 1)}%">
               </div>
-            </span>
-          </div>
-        </c:if>
-
-        <%-- 分隔線 --%>
-        <c:if test="${not empty sessionScope.vaultUsername}">
-          <div class="d-none d-md-flex align-items-center me-3">
-            <div class="vr"></div>
+            </div>
           </div>
         </c:if>
 
@@ -81,17 +115,17 @@
                 <i class="bi bi-person-fill"></i>
               </span>
               <div class="d-none d-xl-block ps-2 lh-1">
-                <div class="fw-semibold" style="font-size:0.875rem;">
+                <div class="fw-semibold" style="font-size:0.875rem; line-height:1.2;">
                   <c:out value="${sessionScope.vaultUsername}"/>
                 </div>
-                <div class="text-muted mt-1" style="font-size:0.75rem;">Vault 使用者</div>
+                <div class="text-muted mt-1" style="font-size:0.72rem;">Vault 使用者</div>
               </div>
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow-sm">
               <div class="dropdown-header small text-muted">
                 <i class="bi bi-shield-check me-1"></i>已驗證身份
               </div>
-              <div class="dropdown-divider"></div>
+              <div class="dropdown-divider m-0"></div>
               <form method="post" action="${pageContext.request.contextPath}/logout">
                 <button type="submit" class="dropdown-item text-danger"
                         onclick="return confirm('確定要登出？Token 底下的 Lease 將繼續有效直到 TTL 到期。')">
@@ -103,56 +137,6 @@
         </c:if>
 
       </div>
-
-      <%-- 主導覽連結 --%>
-      <div class="navbar-nav">
-        <div class="nav-item">
-          <a class="nav-link <c:if test='${currentPage == "dashboard"}'>active</c:if>"
-             href="${pageContext.request.contextPath}/dashboard">
-            <span class="nav-link-icon d-md-none d-lg-inline-block">
-              <i class="bi bi-speedometer2"></i>
-            </span>
-            <span class="nav-link-title">儀表板</span>
-          </a>
-        </div>
-        <div class="nav-item">
-          <a class="nav-link <c:if test='${currentPage == "creds"}'>active</c:if>"
-             href="${pageContext.request.contextPath}/creds">
-            <span class="nav-link-icon d-md-none d-lg-inline-block">
-              <i class="bi bi-key-fill"></i>
-            </span>
-            <span class="nav-link-title">動態憑證</span>
-          </a>
-        </div>
-        <div class="nav-item">
-          <a class="nav-link <c:if test='${currentPage == "leases"}'>active</c:if>"
-             href="${pageContext.request.contextPath}/leases">
-            <span class="nav-link-icon d-md-none d-lg-inline-block">
-              <i class="bi bi-hourglass-split"></i>
-            </span>
-            <span class="nav-link-title">Lease 管理</span>
-          </a>
-        </div>
-        <div class="nav-item">
-          <a class="nav-link <c:if test='${currentPage == "data"}'>active</c:if>"
-             href="${pageContext.request.contextPath}/data">
-            <span class="nav-link-icon d-md-none d-lg-inline-block">
-              <i class="bi bi-database"></i>
-            </span>
-            <span class="nav-link-title">資料瀏覽器</span>
-          </a>
-        </div>
-        <div class="nav-item">
-          <a class="nav-link <c:if test='${currentPage == "audit"}'>active</c:if>"
-             href="${pageContext.request.contextPath}/audit">
-            <span class="nav-link-icon d-md-none d-lg-inline-block">
-              <i class="bi bi-journal-text"></i>
-            </span>
-            <span class="nav-link-title">稽核日誌</span>
-          </a>
-        </div>
-      </div>
-
     </div>
   </div>
 </header>

@@ -12,6 +12,7 @@
 4. [建立應用程式資料庫](#3-建立應用程式資料庫)
 5. [驗證設定](#4-驗證設定)
 6. [動態帳號說明](#5-動態帳號說明)
+7. [透過應用程式新增資料並用 mongosh 驗證](#6-透過應用程式新增資料並用-mongosh-驗證)
 
 ---
 
@@ -162,3 +163,69 @@ db.getUsers()
 ```
 
 輸出中可以看到 Vault 建立的臨時帳號，格式為 `v-userpass-*`，這些帳號會在 TTL 到期後自動消失。
+
+---
+
+## 6. 透過應用程式新增資料並用 mongosh 驗證
+
+### 步驟一：確認 vault-admin 具備讀寫權限
+
+`vault-admin` 需要同時擁有以下兩個角色：
+
+| 角色 | 用途 |
+|------|------|
+| `userAdminAnyDatabase` | 建立 / 刪除動態帳號 |
+| `readWriteAnyDatabase` | 讀寫任意資料庫的資料 |
+
+確認現有角色：
+```javascript
+use admin
+db.getUser("vault-admin")
+```
+
+若 `roles` 清單中缺少 `readWriteAnyDatabase`，執行以下指令補上：
+```javascript
+use admin
+db.grantRolesToUser("vault-admin", [
+  { role: "readWriteAnyDatabase", db: "admin" }
+])
+```
+
+> **注意：** `userAdminAnyDatabase` 僅允許管理帳號，**不包含**資料讀寫權限。兩個角色需同時存在。
+
+---
+
+### 步驟二：透過應用程式新增資料
+
+1. 登入應用程式後，前往**動態憑證**頁面申請一組憑證
+2. 進入**資料瀏覽器**（`/data`）
+3. 左下角「指定 Collection」欄位輸入 `demo`，按搜尋圖示
+4. 展開頁面下方**「新增文件」**，輸入 JSON 並送出：
+
+```json
+{"name": "測試", "value": 123}
+```
+
+MongoDB 在第一次寫入時會自動建立 Collection，不需要事先手動建立。
+
+---
+
+### 步驟三：用 mongosh 驗證資料
+
+```bash
+mongosh -u vault-admin -p <vault-admin密碼> --authenticationDatabase admin
+```
+
+```javascript
+use vaultdemo
+db.demo.find().pretty()
+```
+
+預期輸出：
+```json
+{
+  "_id": { "$oid": "..." },
+  "name": "測試",
+  "value": 123
+}
+```

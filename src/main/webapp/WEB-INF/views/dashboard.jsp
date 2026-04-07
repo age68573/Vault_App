@@ -4,28 +4,41 @@
 <c:set var="currentPage" value="dashboard" scope="request"/>
 <%@ include file="_header.jsp" %>
 
-<div class="container-fluid py-4">
-  <div class="d-flex align-items-center mb-4">
-    <h4 class="mb-0 fw-bold"><i class="bi bi-speedometer2 me-2 text-primary"></i>儀表板</h4>
-    <a href="${pageContext.request.contextPath}/dashboard"
-       class="btn btn-sm btn-outline-secondary ms-3">
-      <i class="bi bi-arrow-clockwise me-1"></i>重新整理
-    </a>
+<div class="container-xl py-4">
+
+  <div class="page-header d-print-none mb-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <h2 class="page-title">
+          <i class="bi bi-speedometer2 me-2 text-primary"></i>儀表板
+        </h2>
+      </div>
+      <div class="col-auto">
+        <a href="${pageContext.request.contextPath}/dashboard"
+           class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-arrow-clockwise me-1"></i>重新整理
+        </a>
+      </div>
+    </div>
   </div>
 
   <%-- Token 錯誤提示 --%>
   <c:if test="${not empty tokenError}">
-    <div class="alert alert-warning"><i class="bi bi-exclamation-triangle me-1"></i>
-      <c:out value="${tokenError}"/></div>
+    <div class="alert alert-warning mb-4">
+      <i class="bi bi-exclamation-triangle me-1"></i>
+      <c:out value="${tokenError}"/>
+    </div>
   </c:if>
 
   <div class="row g-4">
 
     <%-- 卡片 1：Vault Token 資訊 --%>
     <div class="col-md-4">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-header bg-dark text-white fw-semibold">
-          <i class="bi bi-shield-check me-2"></i>Vault Token 資訊
+      <div class="card h-100">
+        <div class="card-header" style="background:#1a1a2e; color:#fff;">
+          <h3 class="card-title mb-0">
+            <i class="bi bi-shield-check me-2"></i>Vault Token 資訊
+          </h3>
         </div>
         <div class="card-body">
           <c:choose>
@@ -43,7 +56,9 @@
                     <td class="text-muted small">政策</td>
                     <td class="small">
                       <c:forEach var="p" items="${token.policies}" varStatus="s">
-                        <c:out value="${p}"/><c:if test="${!s.last}">, </c:if>
+                        <span class="badge bg-azure-lt text-azure me-1">
+                          <c:out value="${p}"/>
+                        </span>
                       </c:forEach>
                     </td>
                   </tr>
@@ -65,30 +80,27 @@
                     <td>
                       <c:set var="ttl"      value="${token.remainingTtlSeconds}"/>
                       <c:set var="totalTtl" value="${token.ttl}"/>
-                      <%-- 時間文字徽章 --%>
                       <c:choose>
                         <c:when test="${ttl > 300}">
                           <span class="badge bg-success fs-6 mb-2"
-                                id="dashTtl" data-ttl="${ttl}">
+                                id="dashTtl" data-ttl="${ttl}" data-bar="dashTtlBar">
                             <c:out value="${ttl}"/>秒
                           </span>
                         </c:when>
                         <c:when test="${ttl > 60}">
                           <span class="badge bg-warning text-dark fs-6 mb-2"
-                                id="dashTtl" data-ttl="${ttl}">
+                                id="dashTtl" data-ttl="${ttl}" data-bar="dashTtlBar">
                             <c:out value="${ttl}"/>秒
                           </span>
                         </c:when>
                         <c:otherwise>
                           <span class="badge bg-danger fs-6 mb-2"
-                                id="dashTtl" data-ttl="${ttl}">
+                                id="dashTtl" data-ttl="${ttl}" data-bar="dashTtlBar">
                             <c:out value="${ttl}"/>秒（即將到期）
                           </span>
                         </c:otherwise>
                       </c:choose>
-                      <%-- 進度條 --%>
-                      <div class="progress" style="height:8px;"
-                           title="剩餘 ${ttl} 秒 / 共 ${totalTtl} 秒">
+                      <div class="progress progress-sm" title="剩餘 ${ttl} 秒 / 共 ${totalTtl} 秒">
                         <div id="dashTtlBar"
                              class="progress-bar"
                              role="progressbar"
@@ -111,9 +123,11 @@
 
     <%-- 卡片 2：活躍 Lease --%>
     <div class="col-md-4">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-header bg-dark text-white fw-semibold">
-          <i class="bi bi-hourglass-split me-2"></i>活躍 Lease
+      <div class="card h-100">
+        <div class="card-header" style="background:#1a1a2e; color:#fff;">
+          <h3 class="card-title mb-0">
+            <i class="bi bi-hourglass-split me-2"></i>活躍 Lease
+          </h3>
         </div>
         <div class="card-body">
           <div class="text-center mb-3">
@@ -132,7 +146,9 @@
                         title="${lease.leaseId}">
                     <c:out value="${lease.shortLeaseId}"/>
                   </span>
-                  <span class="badge bg-secondary">TTL: <c:out value="${lease.ttl}"/>s</span>
+                  <span class="badge bg-secondary-lt text-secondary">
+                    TTL: <c:out value="${lease.ttl}"/>s
+                  </span>
                 </li>
               </c:forEach>
             </ul>
@@ -140,7 +156,7 @@
 
           <div class="mt-3">
             <a href="${pageContext.request.contextPath}/leases"
-               class="btn btn-sm btn-outline-primary w-100">
+               class="btn btn-outline-primary btn-sm w-100">
               <i class="bi bi-list-ul me-1"></i>管理所有 Lease
             </a>
           </div>
@@ -150,9 +166,11 @@
 
     <%-- 卡片 3：MongoDB 連線狀態 --%>
     <div class="col-md-4">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-header bg-dark text-white fw-semibold">
-          <i class="bi bi-database me-2"></i>MongoDB 連線狀態
+      <div class="card h-100">
+        <div class="card-header" style="background:#1a1a2e; color:#fff;">
+          <h3 class="card-title mb-0">
+            <i class="bi bi-database me-2"></i>MongoDB 連線狀態
+          </h3>
         </div>
         <div class="card-body">
           <c:choose>
@@ -204,7 +222,7 @@
                           data-bar="dashCredTtlBar">
                       <c:out value="${currentCred.remainingTtlSeconds}"/>秒
                     </span>
-                    <div class="progress" style="height:6px;">
+                    <div class="progress progress-sm">
                       <div id="dashCredTtlBar"
                            class="progress-bar bg-info"
                            role="progressbar"
@@ -236,9 +254,11 @@
   <%-- 快速連結 --%>
   <div class="row mt-4">
     <div class="col-12">
-      <div class="card shadow-sm border-0">
-        <div class="card-header bg-secondary text-white fw-semibold">
-          <i class="bi bi-grid-3x2-gap me-2"></i>快速功能
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title mb-0">
+            <i class="bi bi-grid-3x2-gap me-2"></i>快速功能
+          </h3>
         </div>
         <div class="card-body">
           <div class="row g-3">
@@ -276,6 +296,6 @@
     </div>
   </div>
 
-</div><%-- /container-fluid --%>
+</div><%-- /container-xl --%>
 
 <%@ include file="_footer.jsp" %>

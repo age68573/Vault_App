@@ -5,10 +5,17 @@
 <c:set var="currentPage" value="audit" scope="request"/>
 <%@ include file="_header.jsp" %>
 
-<div class="container-fluid py-4">
-  <h4 class="fw-bold mb-4">
-    <i class="bi bi-journal-text me-2 text-secondary"></i>應用程式稽核日誌
-  </h4>
+<div class="container-xl py-4">
+
+  <div class="page-header d-print-none mb-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <h2 class="page-title">
+          <i class="bi bi-journal-text me-2 text-secondary"></i>應用程式稽核日誌
+        </h2>
+      </div>
+    </div>
+  </div>
 
   <div class="alert alert-info small mb-4">
     <i class="bi bi-info-circle-fill me-1"></i>
@@ -19,7 +26,7 @@
   </div>
 
   <%-- 過濾列 --%>
-  <div class="card shadow-sm border-0 mb-4">
+  <div class="card mb-4">
     <div class="card-body py-2">
       <form method="get" action="${pageContext.request.contextPath}/audit"
             class="row g-2 align-items-end">
@@ -50,19 +57,21 @@
   </div>
 
   <%-- 日誌表格 --%>
-  <div class="card shadow-sm border-0">
+  <div class="card">
     <div class="card-body p-0">
       <c:choose>
         <c:when test="${empty entries}">
-          <div class="text-center py-5 text-muted">
-            <i class="bi bi-journal-x" style="font-size:2.5rem;"></i>
-            <p class="mt-2">尚無稽核記錄</p>
+          <div class="empty py-5">
+            <div class="empty-icon">
+              <i class="bi bi-journal-x" style="font-size:2.5rem; color:#adb5bd;"></i>
+            </div>
+            <p class="empty-title mt-2">尚無稽核記錄</p>
           </div>
         </c:when>
         <c:otherwise>
           <div class="table-responsive">
-            <table class="table table-sm table-hover table-striped align-middle mb-0">
-              <thead class="table-dark">
+            <table class="table table-sm table-hover table-vcenter align-middle mb-0">
+              <thead>
                 <tr>
                   <th style="width:150px">時間</th>
                   <th style="width:140px">操作</th>

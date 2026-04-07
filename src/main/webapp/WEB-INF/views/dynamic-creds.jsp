@@ -4,14 +4,21 @@
 <c:set var="currentPage" value="creds" scope="request"/>
 <%@ include file="_header.jsp" %>
 
-<div class="container-fluid py-4">
-  <h4 class="fw-bold mb-4">
-    <i class="bi bi-key-fill me-2 text-warning"></i>MongoDB 動態憑證
-  </h4>
+<div class="container-xl py-4">
+
+  <div class="page-header d-print-none mb-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <h2 class="page-title">
+          <i class="bi bi-key-fill me-2 text-warning"></i>MongoDB 動態憑證
+        </h2>
+      </div>
+    </div>
+  </div>
 
   <%-- 成功提示 --%>
   <c:if test="${not empty successMsg}">
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
       <i class="bi bi-check-circle-fill me-1"></i>動態憑證申請成功！帳號密碼已顯示於下方。
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
@@ -19,7 +26,7 @@
 
   <%-- 錯誤提示 --%>
   <c:if test="${not empty error}">
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
       <i class="bi bi-exclamation-triangle-fill me-1"></i><c:out value="${error}"/>
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
@@ -29,14 +36,16 @@
 
     <%-- 目前有效憑證 --%>
     <div class="col-lg-7">
-      <div class="card shadow-sm border-0 h-100">
-        <div class="card-header bg-dark text-white fw-semibold">
-          <i class="bi bi-card-checklist me-2"></i>目前有效的動態憑證
+      <div class="card h-100">
+        <div class="card-header" style="background:#1a1a2e; color:#fff;">
+          <h3 class="card-title mb-0">
+            <i class="bi bi-card-checklist me-2"></i>目前有效的動態憑證
+          </h3>
         </div>
         <div class="card-body">
           <c:choose>
             <c:when test="${not empty currentCred and not currentCred.expired}">
-              <table class="table table-bordered table-hover mb-4">
+              <table class="table table-bordered mb-4">
                 <tbody>
                   <tr>
                     <th class="table-light w-30" style="width:30%">Lease ID</th>
@@ -85,7 +94,7 @@
                             data-bar="credTtlBar">
                         <c:out value="${currentCred.remainingTtlSeconds}"/>秒
                       </span>
-                      <div class="progress" style="height:8px;">
+                      <div class="progress progress-sm">
                         <div id="credTtlBar"
                              class="progress-bar bg-success"
                              role="progressbar"
@@ -135,9 +144,11 @@
 
     <%-- 申請新憑證 --%>
     <div class="col-lg-5">
-      <div class="card shadow-sm border-0 mb-4">
-        <div class="card-header bg-warning text-dark fw-semibold">
-          <i class="bi bi-plus-circle me-2"></i>申請新的動態憑證
+      <div class="card mb-4">
+        <div class="card-header bg-warning-lt">
+          <h3 class="card-title mb-0">
+            <i class="bi bi-plus-circle me-2 text-warning"></i>申請新的動態憑證
+          </h3>
         </div>
         <div class="card-body">
           <div class="alert alert-info small">
@@ -167,9 +178,9 @@
 
       <%-- 說明區塊 --%>
       <div class="accordion" id="howItWorks">
-        <div class="accordion-item border-0 shadow-sm">
+        <div class="accordion-item">
           <h2 class="accordion-header">
-            <button class="accordion-button collapsed bg-light" type="button"
+            <button class="accordion-button collapsed" type="button"
                     data-bs-toggle="collapse" data-bs-target="#collapseHow">
               <i class="bi bi-question-circle me-2"></i>動態憑證如何運作？
             </button>

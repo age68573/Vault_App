@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%--
-  共用頁首片段：Bootstrap 5 導覽列
+  共用頁首片段：Tabler 頂部導覽列
   使用方式：<%@ include file="_header.jsp" %>
   需要 Session 中存在 vaultUsername 與 vaultToken。
 --%>
@@ -9,23 +9,27 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="context-path" content="${pageContext.request.contextPath}">
   <title><c:out value="${pageTitle}" default="Vault MongoDB 動態憑證展示"/></title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/tabler.min.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-icons.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/app.css">
 </head>
-<body>
+<body class="antialiased">
+<div class="wrapper">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<header class="navbar navbar-expand-lg navbar-dark" style="background-color:#1a1a2e;">
   <div class="container-fluid">
     <a class="navbar-brand fw-bold" href="${pageContext.request.contextPath}/dashboard">
       <i class="bi bi-shield-lock-fill text-warning me-2"></i>Vault MongoDB 展示
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-            data-bs-target="#navbarNav">
+            data-bs-target="#navbarNav" aria-controls="navbarNav"
+            aria-expanded="false" aria-label="切換導覽">
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
@@ -63,18 +67,18 @@
       <div class="navbar-nav align-items-center">
         <%-- Token TTL 倒數顯示 --%>
         <c:if test="${not empty sessionScope.vaultToken}">
-          <span class="navbar-text me-3">
-            <i class="bi bi-person-circle me-1"></i>
+          <span class="navbar-text me-3 d-flex align-items-center gap-2">
+            <i class="bi bi-person-circle"></i>
             <c:out value="${sessionScope.vaultUsername}"/>
-            &nbsp;|&nbsp;
-            <i class="bi bi-clock me-1"></i>
+            <span class="vr" style="opacity:.4;"></span>
+            <i class="bi bi-clock"></i>
             TTL：<span id="tokenTtl"
                        data-ttl="${sessionScope.vaultToken.remainingTtlSeconds}"
                        data-bar="tokenTtlBar"
                        class="badge bg-success">
               <c:out value="${sessionScope.vaultToken.remainingTtlSeconds}"/>秒
             </span>
-            <div class="progress ms-1" style="height:4px;width:80px;display:inline-flex;vertical-align:middle;">
+            <div class="progress ms-1" style="height:4px;width:72px;">
               <div id="tokenTtlBar"
                    class="progress-bar bg-success"
                    role="progressbar"
@@ -87,13 +91,15 @@
 
         <%-- 登出按鈕 --%>
         <form method="post" action="${pageContext.request.contextPath}/logout"
-              class="d-inline" id="logoutForm">
+              class="d-inline">
           <button type="submit" class="btn btn-sm btn-outline-light"
-                  onclick="return confirm('確定要登出並撤銷 Vault Token？')">
+                  onclick="return confirm('確定要登出？Token 底下的 Lease 將繼續有效直到 TTL 到期。')">
             <i class="bi bi-box-arrow-right me-1"></i>登出
           </button>
         </form>
       </div>
     </div>
   </div>
-</nav>
+</header>
+
+<div class="page-wrapper">

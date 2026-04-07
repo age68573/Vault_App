@@ -5,53 +5,66 @@
 <c:set var="currentPage" value="leases" scope="request"/>
 <%@ include file="_header.jsp" %>
 
-<div class="container-fluid py-4">
-  <div class="d-flex align-items-center mb-4">
-    <h4 class="fw-bold mb-0">
-      <i class="bi bi-hourglass-split me-2 text-primary"></i>Lease 管理
-    </h4>
-    <a href="${pageContext.request.contextPath}/leases"
-       class="btn btn-sm btn-outline-secondary ms-3">
-      <i class="bi bi-arrow-clockwise me-1"></i>重新整理
-    </a>
+<div class="container-xl py-4">
+
+  <div class="page-header d-print-none mb-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <h2 class="page-title">
+          <i class="bi bi-hourglass-split me-2 text-primary"></i>Lease 管理
+        </h2>
+      </div>
+      <div class="col-auto">
+        <a href="${pageContext.request.contextPath}/leases"
+           class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-arrow-clockwise me-1"></i>重新整理
+        </a>
+      </div>
+    </div>
   </div>
 
   <%-- 操作結果提示 --%>
   <c:if test="${not empty msg}">
-    <div class="alert alert-success alert-dismissible fade show">
+    <div class="alert alert-success alert-dismissible fade show mb-4">
       <i class="bi bi-check-circle-fill me-1"></i><c:out value="${msg}"/>
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
   </c:if>
   <c:if test="${not empty error}">
-    <div class="alert alert-danger alert-dismissible fade show">
+    <div class="alert alert-danger alert-dismissible fade show mb-4">
       <i class="bi bi-exclamation-triangle-fill me-1"></i><c:out value="${error}"/>
       <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
   </c:if>
 
-  <div class="card shadow-sm border-0">
-    <div class="card-header bg-dark text-white fw-semibold d-flex align-items-center">
-      <i class="bi bi-list-ul me-2"></i>活躍租約清單
-      <span class="badge bg-primary ms-2">${fn:length(leases)}</span>
+  <div class="card">
+    <div class="card-header" style="background:#1a1a2e; color:#fff;">
+      <h3 class="card-title mb-0">
+        <i class="bi bi-list-ul me-2"></i>活躍租約清單
+        <span class="badge bg-primary ms-2">${fn:length(leases)}</span>
+      </h3>
     </div>
     <div class="card-body p-0">
 
       <c:choose>
         <c:when test="${empty leases}">
-          <div class="text-center py-5 text-muted">
-            <i class="bi bi-inbox" style="font-size:2.5rem;"></i>
-            <p class="mt-2">目前沒有活躍的 Lease</p>
-            <a href="${pageContext.request.contextPath}/creds"
-               class="btn btn-sm btn-warning">
-              <i class="bi bi-key me-1"></i>申請動態憑證以建立 Lease
-            </a>
+          <div class="empty py-5">
+            <div class="empty-icon">
+              <i class="bi bi-inbox" style="font-size:2.5rem; color:#adb5bd;"></i>
+            </div>
+            <p class="empty-title mt-2">目前沒有活躍的 Lease</p>
+            <div class="empty-action">
+              <a href="${pageContext.request.contextPath}/creds"
+                 class="btn btn-warning btn-sm">
+                <i class="bi bi-key me-1"></i>申請動態憑證以建立 Lease
+              </a>
+            </div>
           </div>
         </c:when>
         <c:otherwise>
           <div class="table-responsive">
-            <table class="table table-hover table-striped align-middle mb-0">
-              <thead class="table-secondary">
+            <table class="table table-hover table-vcenter align-middle mb-0">
+              <thead>
                 <tr>
                   <th>Lease ID</th>
                   <th>發行時間</th>
@@ -83,7 +96,7 @@
                         </c:otherwise>
                       </c:choose>
                     </td>
-                    <td class="text-center" style="min-width:120px;">
+                    <td class="text-center" style="min-width:140px;">
                       <c:choose>
                         <c:when test="${lease.ttl > 300}">
                           <span class="badge bg-success mb-1"
@@ -107,7 +120,7 @@
                           </span>
                         </c:otherwise>
                       </c:choose>
-                      <div class="progress" style="height:6px;">
+                      <div class="progress progress-sm">
                         <div id="leaseTtlBar_${ls.index}"
                              class="progress-bar ${lease.ttl > 300 ? 'bg-success' : (lease.ttl > 60 ? 'bg-warning' : 'bg-danger')}"
                              role="progressbar"
@@ -138,7 +151,7 @@
                             <input type="hidden" name="leaseId" value="${lease.leaseId}">
                             <button type="submit" class="btn btn-sm btn-outline-primary"
                                     title="續期此 Lease（增加 3600 秒）">
-                              <i class="bi bi-arrow-repeat"></i>續期
+                              <i class="bi bi-arrow-repeat"></i> 續期
                             </button>
                           </form>
                         </c:if>
@@ -152,7 +165,7 @@
                           <input type="hidden" name="leaseId" value="${lease.leaseId}">
                           <button type="submit" class="btn btn-sm btn-outline-danger"
                                   title="立即撤銷此 Lease（憑證將無法使用）">
-                            <i class="bi bi-trash3"></i>撤銷
+                            <i class="bi bi-trash3"></i> 撤銷
                           </button>
                         </form>
 
@@ -184,7 +197,6 @@ function confirmRevoke(leaseId) {
   return confirm('確定要撤銷 Lease：' + leaseId + ' ？\n撤銷後對應的 MongoDB 帳號將立即失效，此操作無法復原。');
 }
 
-// 啟用 Bootstrap Tooltip
 document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
   new bootstrap.Tooltip(el);
 });

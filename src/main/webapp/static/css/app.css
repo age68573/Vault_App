@@ -1,19 +1,19 @@
 /* =========================================================
-   Vault MongoDB 動態憑證展示 — 自訂樣式
+   Vault MongoDB 動態憑證展示 — 自訂樣式（Tabler 版）
    ========================================================= */
 
-/* 頁面整體佈局 */
-body {
-  min-height: 100vh;
+/* 頁面整體佈局：確保 footer 貼底 */
+.wrapper {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
 }
 
-.container-fluid.py-4 {
+.page-wrapper {
   flex: 1;
 }
 
-/* 導覽列 TTL 徽章動畫 */
+/* 導覽列 TTL 徽章到期閃爍 */
 #tokenTtl.bg-danger {
   animation: ttl-blink 1s ease-in-out infinite;
 }
@@ -28,16 +28,7 @@ body {
   font-size: 0.85rem;
 }
 
-/* 儀表板卡片 hover 效果 */
-.card {
-  transition: box-shadow 0.2s ease;
-}
-
-.card:hover {
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
-}
-
-/* 資料瀏覽器：Collection 側欄寬度 */
+/* 資料瀏覽器：Collection 側欄最大寬度 */
 @media (min-width: 768px) {
   .col-md-3.col-lg-2 {
     max-width: 220px;
@@ -50,17 +41,12 @@ body {
   white-space: pre-wrap;
 }
 
-/* 密碼輸入框 */
+/* 密碼輸入框字距 */
 #credPassword {
   letter-spacing: 0.1em;
 }
 
-/* 稽核日誌：操作徽章對齊 */
-.badge {
-  font-size: 0.75rem;
-}
-
-/* 頁尾固定在底部 */
-.footer {
-  margin-top: auto;
+/* Tabler progress-sm 高度微調 */
+.progress.progress-sm {
+  height: 6px;
 }

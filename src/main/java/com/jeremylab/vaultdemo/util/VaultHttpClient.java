@@ -6,10 +6,14 @@ import com.jeremylab.vaultdemo.service.VaultException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.cert.X509Certificate;
 import java.time.Duration;
 
 /**
@@ -31,9 +35,25 @@ public class VaultHttpClient {
 
     public VaultHttpClient() {
         this.vaultAddr = AppConfig.VAULT_ADDR;
-        this.httpClient = HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(AppConfig.HTTP_TIMEOUT_SECONDS))
-                .build();
+        HttpClient.Builder builder = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(AppConfig.HTTP_TIMEOUT_SECONDS));
+
+        if (AppConfig.VAULT_SKIP_VERIFY) {
+            try {
+                SSLContext sslContext = SSLContext.getInstance("TLS");
+                sslContext.init(null, new TrustManager[]{new X509TrustManager() {
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) {}
+                    public void checkServerTrusted(X509Certificate[] chain, String authType) {}
+                    public X509Certificate[] getAcceptedIssuers() { return new X509Certificate[0]; }
+                }}, new java.security.SecureRandom());
+                builder.sslContext(sslContext);
+                LOG.warn("VAULT_SKIP_VERIFY=true：已停用 TLS 憑證驗證，僅限開發環境使用");
+            } catch (Exception e) {
+                LOG.error("建立略過 TLS 驗證的 SSLContext 失敗：{}", e.getMessage(), e);
+            }
+        }
+
+        this.httpClient = builder.build();
     }
 
     /**

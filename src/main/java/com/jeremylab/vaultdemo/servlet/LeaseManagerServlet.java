@@ -46,11 +46,12 @@ public class LeaseManagerServlet extends HttpServlet {
         VaultToken  token    = (VaultToken) session.getAttribute("vaultToken");
         String      username = (String) session.getAttribute("vaultUsername");
 
+        // 取得活躍 Lease 清單（優先向 Vault LIST，失敗時退回 Session 清單）
         List<String> knownLeaseIds = (List<String>) session.getAttribute("knownLeaseIds");
         if (knownLeaseIds == null) knownLeaseIds = new ArrayList<>();
 
         List<LeaseInfo> leases =
-                vaultService.lookupLeases(token.getClientToken(), knownLeaseIds);
+                vaultService.listAndLookupLeases(token.getClientToken(), knownLeaseIds);
 
         req.setAttribute("leases",   leases);
         req.setAttribute("username", username);

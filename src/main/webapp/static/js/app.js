@@ -78,19 +78,16 @@ function initTtlCountdowns() {
     if (isNaN(remaining)) return;
 
     // 每秒更新一次
+    const barId = el.getAttribute('data-bar');
+
     const timer = setInterval(() => {
       remaining -= 1;
       el.textContent = formatTtl(remaining);
       updateBadgeColor(el, remaining);
 
-      // 導覽列特殊處理：加入格式化顯示
-      if (el.id === 'tokenTtl') {
-        el.textContent = formatTtl(remaining);
-      }
-
-      // 同步更新對應的進度條
-      if (el.id === 'dashTtl') {
-        updateProgressBar('dashTtlBar', remaining);
+      // 同步更新對應的進度條（透過 data-bar 屬性指定）
+      if (barId) {
+        updateProgressBar(barId, remaining);
       }
 
       // 過期後停止計時並顯示「已過期」

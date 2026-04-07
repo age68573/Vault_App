@@ -70,9 +70,18 @@
             <i class="bi bi-clock me-1"></i>
             TTL：<span id="tokenTtl"
                        data-ttl="${sessionScope.vaultToken.remainingTtlSeconds}"
+                       data-bar="tokenTtlBar"
                        class="badge bg-success">
               <c:out value="${sessionScope.vaultToken.remainingTtlSeconds}"/>秒
             </span>
+            <div class="progress ms-1" style="height:4px;width:80px;display:inline-flex;vertical-align:middle;">
+              <div id="tokenTtlBar"
+                   class="progress-bar bg-success"
+                   role="progressbar"
+                   data-total="${sessionScope.vaultToken.ttl}"
+                   style="width:${sessionScope.vaultToken.remainingTtlSeconds * 100 / (sessionScope.vaultToken.ttl > 0 ? sessionScope.vaultToken.ttl : 1)}%">
+              </div>
+            </div>
           </span>
         </c:if>
 

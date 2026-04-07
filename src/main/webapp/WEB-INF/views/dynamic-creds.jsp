@@ -77,13 +77,22 @@
                     <td><c:out value="${currentCred.leaseDuration}"/>秒</td>
                   </tr>
                   <tr>
-                    <th class="table-light">剩餘時間</th>
+                    <th class="table-light" style="vertical-align:top;padding-top:10px;">剩餘時間</th>
                     <td>
                       <span id="credTtlBadge"
-                            class="badge bg-success fs-6"
-                            data-ttl="${currentCred.remainingTtlSeconds}">
+                            class="badge bg-success fs-6 mb-2"
+                            data-ttl="${currentCred.remainingTtlSeconds}"
+                            data-bar="credTtlBar">
                         <c:out value="${currentCred.remainingTtlSeconds}"/>秒
                       </span>
+                      <div class="progress" style="height:8px;">
+                        <div id="credTtlBar"
+                             class="progress-bar bg-success"
+                             role="progressbar"
+                             data-total="${currentCred.leaseDuration}"
+                             style="width:${currentCred.remainingTtlSeconds * 100 / (currentCred.leaseDuration > 0 ? currentCred.leaseDuration : 1)}%">
+                        </div>
+                      </div>
                     </td>
                   </tr>
                   <tr>

@@ -62,7 +62,7 @@
                 </tr>
               </thead>
               <tbody>
-                <c:forEach var="lease" items="${leases}">
+                <c:forEach var="lease" items="${leases}" varStatus="ls">
                   <tr>
                     <td class="font-monospace small"
                         title="${lease.leaseId}"
@@ -83,20 +83,38 @@
                         </c:otherwise>
                       </c:choose>
                     </td>
-                    <td class="text-center">
+                    <td class="text-center" style="min-width:120px;">
                       <c:choose>
                         <c:when test="${lease.ttl > 300}">
-                          <span class="badge bg-success"><c:out value="${lease.ttl}"/></span>
+                          <span class="badge bg-success mb-1"
+                                data-ttl="${lease.ttl}"
+                                data-bar="leaseTtlBar_${ls.index}">
+                            <c:out value="${lease.ttl}"/>秒
+                          </span>
                         </c:when>
                         <c:when test="${lease.ttl > 60}">
-                          <span class="badge bg-warning text-dark">
-                            <c:out value="${lease.ttl}"/>
+                          <span class="badge bg-warning text-dark mb-1"
+                                data-ttl="${lease.ttl}"
+                                data-bar="leaseTtlBar_${ls.index}">
+                            <c:out value="${lease.ttl}"/>秒
                           </span>
                         </c:when>
                         <c:otherwise>
-                          <span class="badge bg-danger"><c:out value="${lease.ttl}"/></span>
+                          <span class="badge bg-danger mb-1"
+                                data-ttl="${lease.ttl}"
+                                data-bar="leaseTtlBar_${ls.index}">
+                            <c:out value="${lease.ttl}"/>秒
+                          </span>
                         </c:otherwise>
                       </c:choose>
+                      <div class="progress" style="height:6px;">
+                        <div id="leaseTtlBar_${ls.index}"
+                             class="progress-bar ${lease.ttl > 300 ? 'bg-success' : (lease.ttl > 60 ? 'bg-warning' : 'bg-danger')}"
+                             role="progressbar"
+                             data-total="${lease.ttl}"
+                             style="width:100%">
+                        </div>
+                      </div>
                     </td>
                     <td class="text-center">
                       <c:choose>

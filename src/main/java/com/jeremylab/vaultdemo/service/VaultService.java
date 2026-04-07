@@ -154,6 +154,55 @@ public class VaultService {
     }
 
     /**
+     * 透過 Vault LIST API 取得指定前綴下所有活躍的 Lease ID。
+     * 需要 Policy 具有 sudo + list capability。
+     * 呼叫 LIST /v1/sys/leases/lookup/{prefix}
+     *
+     * @param vaultToken Vault Token（需具備 sudo 權限）
+     * @param prefix     Lease 路徑前綴，例如 database/creds/mongo-role
+     * @return Lease ID 清單
+     * @throws VaultException Vault API 錯誤
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> listLeaseIdsByPrefix(String vaultToken, String prefix) throws VaultException {
+        String path = "/v1/sys/leases/lookup/" + prefix;
+        LOG.debug("LIST Leases：{}", path);
+        String response = client.list(path, vaultToken);
+
+        Map<String, Object> json = JsonUtil.parseObject(response);
+        Object keys = json.get("keys");
+        List<String> result = new ArrayList<>();
+        if (keys instanceof List) {
+            for (Object key : (List<Object>) keys) {
+                if (key instanceof String) {
+                    result.add("database/creds/" + AppConfig.VAULT_DB_ROLE + "/" + key);
+                }
+            }
+        }
+        LOG.debug("LIST Leases 取得 {} 筆", result.size());
+        return result;
+    }
+
+    /**
+     * 透過 Vault LIST API 取得活躍 Lease 並查詢詳細資訊。
+     * 若 LIST 失敗（權限不足），退回使用 fallbackLeaseIds 清單。
+     *
+     * @param vaultToken        目前的 Vault Token
+     * @param fallbackLeaseIds  備用的已知 Lease ID 清單（來自 Session）
+     * @return LeaseInfo 清單
+     */
+    public List<LeaseInfo> listAndLookupLeases(String vaultToken, List<String> fallbackLeaseIds) {
+        try {
+            List<String> ids = listLeaseIdsByPrefix(vaultToken,
+                    "database/creds/" + AppConfig.VAULT_DB_ROLE);
+            return lookupLeases(vaultToken, ids);
+        } catch (VaultException e) {
+            LOG.warn("LIST Leases 失敗（權限不足？），退回 Session 清單：{}", e.getMessage());
+            return lookupLeases(vaultToken, fallbackLeaseIds);
+        }
+    }
+
+    /**
      * 續期指定的 Lease。
      * 呼叫 PUT /v1/sys/leases/renew
      *

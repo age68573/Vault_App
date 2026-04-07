@@ -196,12 +196,22 @@
                   <td class="small font-monospace"><c:out value="${currentCred.username}"/></td>
                 </tr>
                 <tr>
-                  <td class="text-muted small">憑證 TTL</td>
+                  <td class="text-muted small" style="vertical-align:top;padding-top:6px;">憑證 TTL</td>
                   <td class="small">
-                    <span class="badge bg-info text-dark"
-                          data-ttl="${currentCred.remainingTtlSeconds}">
+                    <span id="dashCredTtl"
+                          class="badge bg-info text-dark mb-1"
+                          data-ttl="${currentCred.remainingTtlSeconds}"
+                          data-bar="dashCredTtlBar">
                       <c:out value="${currentCred.remainingTtlSeconds}"/>秒
                     </span>
+                    <div class="progress" style="height:6px;">
+                      <div id="dashCredTtlBar"
+                           class="progress-bar bg-info"
+                           role="progressbar"
+                           data-total="${currentCred.leaseDuration}"
+                           style="width:${currentCred.remainingTtlSeconds * 100 / (currentCred.leaseDuration > 0 ? currentCred.leaseDuration : 1)}%">
+                      </div>
+                    </div>
                   </td>
                 </tr>
               </table>

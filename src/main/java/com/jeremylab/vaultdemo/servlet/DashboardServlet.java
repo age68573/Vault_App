@@ -67,11 +67,11 @@ public class DashboardServlet extends HttpServlet {
             req.setAttribute("tokenError", "無法取得 Token 資訊：" + e.getMessage());
         }
 
-        // 取得已知 Lease 清單
+        // 取得活躍 Lease 清單（優先向 Vault LIST，失敗時退回 Session 清單）
         List<String> knownLeaseIds = (List<String>) session.getAttribute("knownLeaseIds");
         if (knownLeaseIds == null) knownLeaseIds = new ArrayList<>();
 
-        List<LeaseInfo> leases = vaultService.lookupLeases(token.getClientToken(), knownLeaseIds);
+        List<LeaseInfo> leases = vaultService.listAndLookupLeases(token.getClientToken(), knownLeaseIds);
 
         // 測試 MongoDB 連線（若有憑證）
         MongoService.ConnectionStatus connStatus = null;

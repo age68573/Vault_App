@@ -170,7 +170,9 @@ public class VaultService {
         String response = client.list(path, vaultToken);
 
         Map<String, Object> json = JsonUtil.parseObject(response);
-        Object keys = json.get("keys");
+        // Vault LIST 回應格式：{ "data": { "keys": [...] } }
+        Map<String, Object> data = JsonUtil.get(json, "data");
+        Object keys = (data != null) ? data.get("keys") : json.get("keys");
         List<String> result = new ArrayList<>();
         if (keys instanceof List) {
             for (Object key : (List<Object>) keys) {

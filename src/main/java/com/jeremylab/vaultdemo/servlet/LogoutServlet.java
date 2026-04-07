@@ -36,10 +36,8 @@ public class LogoutServlet extends HttpServlet {
             VaultToken token    = (VaultToken) session.getAttribute("vaultToken");
             String     username = (String) session.getAttribute("vaultUsername");
 
-            if (token != null) {
-                // 盡力撤銷 Token（失敗時僅記錄日誌，不阻斷登出流程）
-                vaultService.revokeSelf(token.getClientToken());
-            }
+            // 注意：不撤銷 Token，保留 Token 底下的動態憑證 Lease 繼續有效
+            // 若需要撤銷所有 Lease，請先逐一呼叫 revokeLease，再呼叫 revokeSelf
 
             auditLog.record(AuditEntry.success(
                     AuditEntry.OP_LOGOUT,

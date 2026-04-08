@@ -5,6 +5,6 @@
              https://www.jboss.org/j2ee/schema/jboss-web_10_0.xsd">
 
   <!-- 應用程式 Context Root，部署後透過 /vaultdemo 存取 -->
-  <context-root>/vaultdemo</context-root>
+  <context-root>/vault-mongo-demo</context-root>
 
 </jboss-web>

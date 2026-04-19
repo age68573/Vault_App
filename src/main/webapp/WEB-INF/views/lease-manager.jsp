@@ -149,7 +149,7 @@
                       </c:choose>
                     </td>
                     <td class="text-center">
-                      <div class="d-flex gap-1 justify-content-center lease-actions">
+                      <div class="btn-group btn-group-sm" role="group">
                         <c:if test="${lease.renewable}">
                           <form method="post" action="${pageContext.request.contextPath}/leases"
                                 class="d-inline">

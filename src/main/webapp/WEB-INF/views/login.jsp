@@ -37,18 +37,22 @@
 
         <%-- 認證方式切換 Tabs --%>
         <c:set var="selectedMethod" value="${not empty authMethod ? authMethod : 'userpass'}"/>
-        <div class="login-auth-tabs">
-          <button class="login-auth-tab ${selectedMethod == 'userpass' ? 'active' : ''}"
-                  id="tab-userpass" type="button"
-                  onclick="selectAuth('userpass')">
-            <i class="bi bi-person-lock me-1"></i>Userpass
-          </button>
-          <button class="login-auth-tab ${selectedMethod == 'ldap' ? 'active' : ''}"
-                  id="tab-ldap" type="button"
-                  onclick="selectAuth('ldap')">
-            <i class="bi bi-diagram-3 me-1"></i>LDAP
-          </button>
-        </div>
+        <ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link ${selectedMethod == 'userpass' ? 'active' : ''}"
+                    id="tab-userpass" type="button" role="tab"
+                    onclick="selectAuth('userpass')">
+              <i class="bi bi-person-lock me-1"></i>Userpass
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link ${selectedMethod == 'ldap' ? 'active' : ''}"
+                    id="tab-ldap" type="button" role="tab"
+                    onclick="selectAuth('ldap')">
+              <i class="bi bi-diagram-3 me-1"></i>LDAP
+            </button>
+          </li>
+        </ul>
 
         <form method="post" action="${pageContext.request.contextPath}/login" autocomplete="off">
           <input type="hidden" id="authMethod" name="authMethod" value="${selectedMethod}">

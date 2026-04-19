@@ -88,7 +88,7 @@
                       id="dashTtl" data-ttl="${ttl}" data-bar="dashTtlBar">
                       <c:out value="${ttl}"/>秒
                     </span>
-                    <div class="progress progress-sm progress-track-success mt-1">
+                    <div class="progress progress-sm mt-1">
                       <div id="dashTtlBar" class="progress-bar
                         <c:choose>
                           <c:when test='${ttl > 300}'>bg-success</c:when>
@@ -223,7 +223,7 @@
                           data-bar="dashCredTtlBar">
                       <c:out value="${currentCred.remainingTtlSeconds}"/>秒
                     </span>
-                    <div class="progress progress-sm progress-track-info">
+                    <div class="progress progress-sm">
                       <div id="dashCredTtlBar" class="progress-bar bg-info" role="progressbar"
                            data-total="${currentCred.leaseDuration}"
                            style="width:${currentCred.remainingTtlSeconds * 100 / (currentCred.leaseDuration > 0 ? currentCred.leaseDuration : 1)}%">

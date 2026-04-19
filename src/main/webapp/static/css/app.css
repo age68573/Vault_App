@@ -1,43 +1,8 @@
 /* =========================================================
    Vault MongoDB 動態憑證展示 — 自訂樣式（Tabler 版）
-   Design System: Colors & Typography from vault-mongodb-design-system
    ========================================================= */
 
-/* -----------------------------------------------------------
-   COLOR TOKENS
-   ----------------------------------------------------------- */
-:root {
-  --color-vault:        #f59f00;
-  --color-vault-lt:     #fff8e1;
-  --color-primary:      #0054a6;
-  --color-primary-lt:   #dce8f7;
-  --color-success:      #2fb344;
-  --color-success-lt:   #d3f5db;
-  --color-danger:       #d63939;
-  --color-danger-lt:    #fce8e8;
-  --color-warning:      #f59f00;
-  --color-warning-lt:   #fff3cd;
-  --color-info:         #4299e1;
-  --color-info-lt:      #dbeeff;
-  --color-secondary:    #6c757d;
-  --color-secondary-lt: #e9ecef;
-
-  --color-page-bg:  #f1f5f9;
-  --color-surface:  #ffffff;
-  --color-border:   #e2e6ec;
-  --color-body:     #1d273b;
-  --color-muted:    #6c757d;
-
-  --shadow-sm: 0 1px 3px 0 rgba(0,0,0,.08), 0 1px 2px 0 rgba(0,0,0,.04);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,.10), 0 2px 4px -1px rgba(0,0,0,.06);
-
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", "Courier New", monospace;
-}
-
-/* -----------------------------------------------------------
-   PAGE LAYOUT — footer 貼底
-   ----------------------------------------------------------- */
+/* 頁面整體：footer 貼底 */
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -48,191 +13,23 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: var(--color-page-bg);
 }
 
 .page-body {
   flex: 1;
 }
 
-/* -----------------------------------------------------------
-   NAVBAR — Light "B" style
-   #f7f8fc background, white-pill active items, unified right side
-   ----------------------------------------------------------- */
-.navbar {
-  background: #f7f8fc !important;
-  border-bottom: 1px solid var(--color-border) !important;
-  box-shadow: none !important;
-  height: 48px;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-/* Brand */
-.navbar .navbar-brand {
-  font-size: 13px;
-  font-weight: 700;
-  color: #1d2433 !important;
-  white-space: nowrap;
-  margin-right: 20px;
-}
-
-/* Nav links — pill style */
-.navbar .navbar-nav .nav-link {
-  display: inline-flex !important;
-  align-items: center;
-  gap: 5px;
-  padding: 0 10px !important;
-  height: 32px;
-  border-radius: 6px;
-  color: #8891a4 !important;
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
-  margin: 0 1px;
-  transition: background .12s, color .12s;
-}
-
-.navbar .navbar-nav .nav-link .nav-link-icon {
-  display: inline-flex;
-  align-items: center;
-  margin-right: 0;
-}
-
-.navbar .navbar-nav .nav-link .nav-link-title {
-  line-height: 1;
-}
-
-.navbar .navbar-nav .nav-link.active,
-.navbar .navbar-nav .nav-link:focus,
-.navbar .navbar-nav .nav-link[aria-expanded="true"] {
-  background: #fff !important;
-  color: #1d2433 !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,.08);
-}
-
-.navbar .navbar-nav .nav-link:hover:not(.active) {
-  background: rgba(0,0,0,.04) !important;
-  color: #1d2433 !important;
-}
-
-/* Right-side area — same background, no extra pockets */
-.navbar .navbar-nav.flex-row.order-lg-last {
-  background: transparent;
-}
-
-/* Token TTL widget */
-.navbar-ttl-widget {
-  min-width: 100px;
-}
-
-.navbar-ttl-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 5px;
-  gap: 8px;
-}
-
-.navbar-ttl-label {
-  font-size: 9px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  color: #b0b8c8;
-  white-space: nowrap;
-}
-
-.navbar-ttl-badge {
-  font-size: 10px !important;
-  font-weight: 600 !important;
-  padding: 1px 6px !important;
-  border-radius: 4px !important;
-  background: #f7f8fc !important;
-  border: 1px solid #b8e4c2 !important;
-  color: #1f8a3c !important;
-  white-space: nowrap;
-}
-
-.navbar-ttl-badge.ttl-warning {
-  border-color: #ffe08a !important;
-  color: #7d5a00 !important;
-}
-
-.navbar-ttl-badge.ttl-danger {
-  border-color: #f5b8b8 !important;
-  color: #8c1f1f !important;
+/* Token TTL 徽章到期閃爍 */
+#tokenTtl.bg-danger {
   animation: ttl-blink 1s ease-in-out infinite;
 }
 
-.navbar-ttl-bar {
-  height: 3px;
-  background: var(--color-border);
-  border-radius: 999px;
-  overflow: hidden;
+@keyframes ttl-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
 }
 
-.navbar-ttl-bar-fill {
-  height: 100%;
-  border-radius: 999px;
-  transition: width .5s;
-}
-
-/* User avatar chip */
-.navbar-user-avatar {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: #eef4ff;
-  color: #3d5fc4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  border: 1px solid #d6e0f7;
-  flex-shrink: 0;
-}
-
-.navbar-user-name {
-  font-size: 11px;
-  font-weight: 600;
-  color: #1d2433;
-  white-space: nowrap;
-}
-
-.navbar-user-role {
-  font-size: 9px;
-  color: #b0b8c8;
-  white-space: nowrap;
-}
-
-/* Divider before user section */
-.navbar-right-divider {
-  width: 1px;
-  height: 24px;
-  background: var(--color-border);
-  margin: 0 4px;
-}
-
-/* -----------------------------------------------------------
-   CARDS — Figma-style, 8px radius, dual-shadow
-   ----------------------------------------------------------- */
-.card {
-  border-radius: 8px !important;
-  border-color: var(--color-border) !important;
-  box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.06) !important;
-}
-
-.card-header {
-  border-radius: 8px 8px 0 0 !important;
-}
-
-/* Card header icon chips */
-.avatar.avatar-sm {
-  border-radius: 6px !important;
-}
-
-/* Quick-action cards hover */
+/* 快速功能卡片 hover */
 .card-link-pop {
   transition: transform .15s ease, box-shadow .15s ease;
   text-decoration: none;
@@ -240,140 +37,31 @@
 }
 .card-link-pop:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,.10) !important;
+  box-shadow: var(--tblr-box-shadow-sm);
   color: inherit;
 }
 
-/* -----------------------------------------------------------
-   PROGRESS BARS — 7px height, semi-transparent fills
-   ----------------------------------------------------------- */
-.progress.progress-sm {
-  height: 7px !important;
-  border-radius: 999px;
-  background: rgba(0,0,0,.06);
-}
-
-/* Semi-transparent TTL fills */
-.progress.progress-sm .progress-bar.bg-success {
-  background: rgba(47, 179, 68, .55) !important;
-  box-shadow: 0 0 6px rgba(47, 179, 68, .3);
-}
-.progress.progress-sm .progress-bar.bg-warning {
-  background: rgba(245, 159, 0, .60) !important;
-}
-.progress.progress-sm .progress-bar.bg-danger {
-  background: rgba(214, 57, 57, .65) !important;
-}
-.progress.progress-sm .progress-bar.bg-info {
-  background: rgba(66, 153, 225, .55) !important;
-}
-
-/* Matching track colors for named contexts */
-.progress.progress-sm.progress-track-success {
-  background: rgba(47, 179, 68, .12) !important;
-}
-.progress.progress-sm.progress-track-info {
-  background: rgba(66, 153, 225, .12) !important;
-}
-
-/* -----------------------------------------------------------
-   BUTTONS — fixed height, no wrap
-   ----------------------------------------------------------- */
-.btn {
-  white-space: nowrap !important;
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn.btn-sm {
-  height: 28px !important;
-}
-
-.btn:not(.btn-sm):not(.btn-lg) {
-  height: 32px;
-}
-
-/* Prevent .dropdown-item from getting the height override */
-.dropdown-menu .btn,
-.dropdown-item {
-  height: auto !important;
-}
-
-/* -----------------------------------------------------------
-   TOKEN TTL 閃爍 (danger)
-   ----------------------------------------------------------- */
-@keyframes ttl-blink {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.5; }
-}
-
-/* -----------------------------------------------------------
-   TYPOGRAPHY — monospace blocks
-   ----------------------------------------------------------- */
+/* JSON 文件顯示區塊 */
 code.json-block {
   display: block;
-  font-family: var(--font-mono);
+  font-family: var(--tblr-font-monospace, monospace);
   font-size: 0.8rem;
-  background-color: #f6f8fb;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
+  background-color: var(--tblr-bg-surface-secondary, #f6f8fb);
+  border: 1px solid var(--tblr-border-color, #e6e7e9);
+  border-radius: var(--tblr-border-radius, 4px);
   padding: 0.4rem 0.6rem;
-  color: var(--color-body);
+  color: var(--tblr-body-color, #1d273b);
   white-space: pre-wrap;
   word-break: break-all;
   max-width: 640px;
 }
 
-/* Password field extra letter spacing */
+/* 密碼輸入框字距 */
 #credPassword {
   letter-spacing: 0.08em;
 }
 
-/* -----------------------------------------------------------
-   LOGIN PAGE — Tab buttons
-   ----------------------------------------------------------- */
-.login-auth-tabs {
-  display: flex;
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: 20px;
-}
-
-.login-auth-tab {
-  padding: 8px 16px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  background: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  color: var(--color-muted);
-  font-family: inherit;
-  transition: color .15s, border-color .15s;
-}
-
-.login-auth-tab.active {
-  color: var(--color-primary);
-  border-bottom-color: var(--color-primary);
-}
-
-.login-auth-tab:hover:not(.active) {
-  color: var(--color-body);
-}
-
-/* -----------------------------------------------------------
-   LEASE MANAGER — operation button group
-   ----------------------------------------------------------- */
-.lease-actions .btn {
-  height: 28px !important;
-  padding: 0 10px !important;
-}
-
-/* -----------------------------------------------------------
-   TABLE — dense admin rows
-   ----------------------------------------------------------- */
-.table.table-vcenter td,
-.table.table-vcenter th {
-  vertical-align: middle;
+/* progress-sm */
+.progress.progress-sm {
+  height: 4px;
 }

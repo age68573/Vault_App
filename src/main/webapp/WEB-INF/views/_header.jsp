@@ -7,30 +7,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="context-path" content="${pageContext.request.contextPath}">
   <title><c:out value="${pageTitle}" default="Vault MongoDB 動態憑證展示"/></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/tabler.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/bootstrap-icons.min.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/static/css/app.css">
 </head>
-<body class="antialiased">
+<body class="antialiased" style="font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
 <div class="wrapper">
 
 <header class="navbar navbar-expand-lg d-print-none">
-  <div class="container-fluid">
+  <div class="container-fluid" style="height:48px; padding:0 20px;">
 
-    <a class="navbar-brand" href="${pageContext.request.contextPath}/dashboard">
-      <i class="bi bi-shield-lock-fill text-warning me-2"></i>
-      <span class="fw-bold">Vault MongoDB 展示</span>
+    <%-- Brand --%>
+    <a class="navbar-brand" href="${pageContext.request.contextPath}/dashboard"
+       style="display:flex; align-items:center; gap:8px; margin-right:20px; flex-shrink:0;">
+      <i class="bi bi-shield-lock-fill" style="font-size:1.2rem; color:#f59f00;"></i>
+      <span style="font-weight:700; color:#1d2433; font-size:13px; white-space:nowrap;">Vault MongoDB 展示</span>
     </a>
 
     <button class="navbar-toggler" type="button"
             data-bs-toggle="collapse" data-bs-target="#navbar-menu"
-            aria-controls="navbar-menu" aria-expanded="false">
+            aria-controls="navbar-menu" aria-expanded="false"
+            style="border-color:#e2e6ec;">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div class="collapse navbar-collapse" id="navbar-menu">
+    <div class="collapse navbar-collapse" id="navbar-menu"
+         style="display:flex; align-items:center; flex:1; min-width:0;">
 
-      <ul class="navbar-nav">
+      <%-- Nav Links — pill style --%>
+      <ul class="navbar-nav" style="display:flex; flex-direction:row; align-items:center; flex:1; min-width:0; gap:1px; flex-wrap:nowrap;">
         <li class="nav-item">
           <a class="nav-link <c:if test='${currentPage == "dashboard"}'>active</c:if>"
              href="${pageContext.request.contextPath}/dashboard">
@@ -68,57 +76,56 @@
         </li>
       </ul>
 
-      <div class="navbar-nav flex-row order-lg-last ms-auto align-items-center gap-2">
+      <%-- Right side: Token TTL + User (same background as navbar) --%>
+      <div style="display:flex; align-items:center; gap:12px; margin-left:16px; flex-shrink:0;">
 
-        <%-- Token TTL --%>
+        <%-- Token TTL widget --%>
         <c:if test="${not empty sessionScope.vaultToken}">
           <c:set var="remainTtl" value="${sessionScope.vaultToken.remainingTtlSeconds}"/>
           <c:set var="totalTtl"  value="${sessionScope.vaultToken.ttl}"/>
-          <div class="d-none d-lg-block me-2" style="min-width:90px;">
-            <div class="d-flex align-items-center justify-content-between mb-1">
-              <span class="text-muted" style="font-size:0.7rem; letter-spacing:.04em; text-transform:uppercase;">Token TTL</span>
+          <c:set var="ttlPct"    value="${remainTtl * 100 / (totalTtl > 0 ? totalTtl : 1)}"/>
+          <c:set var="ttlColorBar" value="${remainTtl > 300 ? '#2fb344' : remainTtl > 60 ? '#f59f00' : '#d63939'}"/>
+
+          <div class="navbar-ttl-widget d-none d-lg-block">
+            <div class="navbar-ttl-header">
+              <span class="navbar-ttl-label">Token TTL</span>
               <span id="tokenTtl"
                     data-ttl="${remainTtl}"
                     data-bar="tokenTtlBar"
-                    class="badge badge-sm ms-1
-                      <c:choose>
-                        <c:when test='${remainTtl > 300}'>bg-success</c:when>
-                        <c:when test='${remainTtl > 60}'>bg-warning text-dark</c:when>
-                        <c:otherwise>bg-danger</c:otherwise>
-                      </c:choose>"
-                    style="font-size:0.65rem;">
+                    data-total="${totalTtl}"
+                    class="navbar-ttl-badge <c:choose>
+                      <c:when test='${remainTtl <= 60}'>ttl-danger</c:when>
+                      <c:when test='${remainTtl <= 300}'>ttl-warning</c:when>
+                    </c:choose>">
                 <c:out value="${remainTtl}"/>s
               </span>
             </div>
-            <div class="progress" style="height:3px;">
+            <div class="navbar-ttl-bar">
               <div id="tokenTtlBar"
-                   class="progress-bar
-                     <c:choose>
-                       <c:when test='${remainTtl > 300}'>bg-success</c:when>
-                       <c:when test='${remainTtl > 60}'>bg-warning</c:when>
-                       <c:otherwise>bg-danger</c:otherwise>
-                     </c:choose>"
-                   role="progressbar"
+                   class="navbar-ttl-bar-fill"
                    data-total="${totalTtl}"
-                   style="width:${remainTtl * 100 / (totalTtl > 0 ? totalTtl : 1)}%">
-              </div>
+                   style="width:${ttlPct}%; background:${ttlColorBar};"></div>
             </div>
           </div>
         </c:if>
 
-        <%-- 使用者下拉選單 --%>
+        <%-- Right divider --%>
         <c:if test="${not empty sessionScope.vaultUsername}">
-          <div class="nav-item dropdown">
-            <a href="#" class="nav-link d-flex lh-1 text-reset p-0"
-               data-bs-toggle="dropdown" aria-label="使用者選單">
-              <span class="avatar avatar-sm bg-primary-lt text-primary">
+          <div class="navbar-right-divider d-none d-lg-block"></div>
+        </c:if>
+
+        <%-- User avatar + dropdown --%>
+        <c:if test="${not empty sessionScope.vaultUsername}">
+          <div class="nav-item dropdown" style="list-style:none;">
+            <a href="#" class="nav-link d-flex align-items-center gap-2 p-0"
+               data-bs-toggle="dropdown" aria-label="使用者選單"
+               style="text-decoration:none;">
+              <div class="navbar-user-avatar">
                 <i class="bi bi-person-fill"></i>
-              </span>
-              <div class="d-none d-xl-block ps-2 lh-1">
-                <div class="fw-semibold" style="font-size:0.875rem; line-height:1.3;">
-                  <c:out value="${sessionScope.vaultUsername}"/>
-                </div>
-                <div class="text-muted" style="font-size:0.72rem; margin-top:2px;">Vault 使用者</div>
+              </div>
+              <div class="d-none d-xl-block">
+                <div class="navbar-user-name"><c:out value="${sessionScope.vaultUsername}"/></div>
+                <div class="navbar-user-role">Vault 使用者</div>
               </div>
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow-sm">
@@ -128,7 +135,8 @@
               <div class="dropdown-divider m-0"></div>
               <form method="post" action="${pageContext.request.contextPath}/logout">
                 <button type="submit" class="dropdown-item text-danger"
-                        onclick="return confirm('確定要登出？')">
+                        onclick="return confirm('確定要登出？')"
+                        style="height:auto !important;">
                   <i class="bi bi-box-arrow-right me-2"></i>登出
                 </button>
               </form>
@@ -136,8 +144,8 @@
           </div>
         </c:if>
 
-      </div>
-    </div>
+      </div><%-- /right side --%>
+    </div><%-- /collapse --%>
   </div>
 </header>
 

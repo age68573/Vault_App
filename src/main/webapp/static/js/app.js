@@ -14,55 +14,81 @@
  */
 function formatTtl(seconds) {
   if (seconds <= 0) return '已過期';
-  if (seconds < 60) return seconds + '秒';
+  if (seconds < 60) return seconds + 's';
 
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
 
   let result = '';
-  if (h > 0) result += h + '小時 ';
-  if (m > 0) result += m + '分 ';
-  result += s + '秒';
+  if (h > 0) result += h + 'h ';
+  if (m > 0) result += m + 'm ';
+  result += s + 's';
   return result.trim();
 }
 
 /**
  * 依據剩餘秒數更新徽章的顏色類別。
+ * 支援兩種模式：
+ *  - navbar-ttl-badge（導覽列 TTL widget）
+ *  - Bootstrap badge（儀表板 / 憑證頁）
  *
  * @param {HTMLElement} el  徽章元素
  * @param {number}      ttl 剩餘秒數
  */
 function updateBadgeColor(el, ttl) {
-  el.classList.remove('bg-success', 'bg-warning', 'bg-danger', 'bg-info', 'text-dark');
-  if (ttl > 300) {
-    el.classList.add('bg-success');
-  } else if (ttl > 60) {
-    el.classList.add('bg-warning', 'text-dark');
+  if (el.classList.contains('navbar-ttl-badge')) {
+    // Navbar style — use custom ttl-* classes
+    el.classList.remove('ttl-warning', 'ttl-danger');
+    if (ttl <= 60) {
+      el.classList.add('ttl-danger');
+    } else if (ttl <= 300) {
+      el.classList.add('ttl-warning');
+    }
+    // else: green (no extra class)
   } else {
-    el.classList.add('bg-danger');
+    // Bootstrap badge style
+    el.classList.remove('bg-success', 'bg-warning', 'bg-danger', 'bg-info', 'text-dark');
+    if (ttl > 300) {
+      el.classList.add('bg-success');
+    } else if (ttl > 60) {
+      el.classList.add('bg-warning', 'text-dark');
+    } else {
+      el.classList.add('bg-danger');
+    }
   }
 }
 
 /**
  * 更新進度條寬度與顏色。
+ * 支援兩種模式：
+ *  - navbar-ttl-bar-fill（導覽列 TTL bar）
+ *  - Bootstrap progress-bar（卡片內進度條）
  *
- * @param {string} barId   進度條元素 ID
+ * @param {string} barId     進度條元素 ID
  * @param {number} remaining 剩餘秒數
  */
 function updateProgressBar(barId, remaining) {
   const bar = document.getElementById(barId);
   if (!bar) return;
   const total = parseInt(bar.getAttribute('data-total'), 10) || 1;
-  const pct = Math.max(0, Math.min(100, (remaining / total) * 100));
+  const pct   = Math.max(0, Math.min(100, (remaining / total) * 100));
   bar.style.width = pct + '%';
-  bar.classList.remove('bg-success', 'bg-warning', 'bg-danger');
-  if (remaining > 300) {
-    bar.classList.add('bg-success');
-  } else if (remaining > 60) {
-    bar.classList.add('bg-warning');
+
+  if (bar.classList.contains('navbar-ttl-bar-fill')) {
+    // Navbar bar — update colour via inline style
+    const color = remaining > 300 ? '#2fb344' : remaining > 60 ? '#f59f00' : '#d63939';
+    bar.style.background = color;
   } else {
-    bar.classList.add('bg-danger');
+    // Bootstrap progress-bar — toggle bg-* classes
+    bar.classList.remove('bg-success', 'bg-warning', 'bg-danger');
+    if (remaining > 300) {
+      bar.classList.add('bg-success');
+    } else if (remaining > 60) {
+      bar.classList.add('bg-warning');
+    } else {
+      bar.classList.add('bg-danger');
+    }
   }
 }
 
@@ -70,14 +96,12 @@ function updateProgressBar(barId, remaining) {
  * 初始化所有帶有 data-ttl 屬性的元素，啟動倒數計時器。
  */
 function initTtlCountdowns() {
-  // 找出所有 TTL 元素（導覽列、儀表板卡片、動態憑證頁等）
   const ttlElements = document.querySelectorAll('[data-ttl]');
 
   ttlElements.forEach(el => {
     let remaining = parseInt(el.getAttribute('data-ttl'), 10);
     if (isNaN(remaining)) return;
 
-    // 每秒更新一次
     const barId = el.getAttribute('data-bar');
 
     const timer = setInterval(() => {
@@ -85,19 +109,23 @@ function initTtlCountdowns() {
       el.textContent = formatTtl(remaining);
       updateBadgeColor(el, remaining);
 
-      // 同步更新對應的進度條（透過 data-bar 屬性指定）
       if (barId) {
         updateProgressBar(barId, remaining);
       }
 
-      // 過期後停止計時並顯示「已過期」
       if (remaining <= 0) {
         clearInterval(timer);
         el.textContent = '已過期';
-        el.classList.remove('bg-success', 'bg-warning', 'bg-info', 'text-dark');
-        el.classList.add('bg-danger');
 
-        // 若 Token 過期，5 秒後自動跳轉至登入頁
+        if (el.classList.contains('navbar-ttl-badge')) {
+          el.classList.remove('ttl-warning');
+          el.classList.add('ttl-danger');
+        } else {
+          el.classList.remove('bg-success', 'bg-warning', 'bg-info', 'text-dark');
+          el.classList.add('bg-danger');
+        }
+
+        // Token 過期後 5 秒跳回登入頁
         if (el.id === 'tokenTtl' || el.id === 'dashTtl') {
           setTimeout(() => {
             const contextPath = document.querySelector('meta[name="context-path"]')

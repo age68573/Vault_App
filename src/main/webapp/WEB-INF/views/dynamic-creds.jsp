@@ -119,7 +119,7 @@
                       <c:out value="${currentCred.remainingTtlSeconds}"/>秒
                     </span>
                   </label>
-                  <div class="progress progress-sm">
+                  <div class="progress progress-sm progress-track-success">
                     <div id="credTtlBar" class="progress-bar bg-success" role="progressbar"
                          data-total="${currentCred.leaseDuration}"
                          style="width:${currentCred.remainingTtlSeconds * 100 / (currentCred.leaseDuration > 0 ? currentCred.leaseDuration : 1)}%">

@@ -60,8 +60,16 @@ public class LoginServlet extends HttpServlet {
             return;
         }
 
+        String authMethod = req.getParameter("authMethod");
+        boolean useLdap = "ldap".equals(authMethod);
+        String auditPath = useLdap
+                ? "/v1/auth/ldap/login/" + username
+                : "/v1/auth/userpass/login/" + username;
+
         try {
-            VaultToken token = vaultService.login(username.trim(), password);
+            VaultToken token = useLdap
+                    ? vaultService.loginLdap(username.trim(), password)
+                    : vaultService.login(username.trim(), password);
 
             // 建立新 Session，防止 Session Fixation 攻擊
             HttpSession oldSession = req.getSession(false);
@@ -69,10 +77,11 @@ public class LoginServlet extends HttpServlet {
             HttpSession newSession = req.getSession(true);
             newSession.setAttribute("vaultToken", token);
             newSession.setAttribute("vaultUsername", username.trim());
+            newSession.setAttribute("vaultAuthMethod", useLdap ? "ldap" : "userpass");
 
             auditLog.record(AuditEntry.success(
                     AuditEntry.OP_LOGIN,
-                    "/v1/auth/userpass/login/" + username,
+                    auditPath,
                     username.trim(),
                     null
             ));
@@ -82,21 +91,23 @@ public class LoginServlet extends HttpServlet {
         } catch (VaultAuthException e) {
             auditLog.record(AuditEntry.failure(
                     AuditEntry.OP_LOGIN,
-                    "/v1/auth/userpass/login/" + username,
+                    auditPath,
                     username.trim(),
                     e.getMessage()
             ));
             req.setAttribute("error", "帳號或密碼錯誤，請確認後重試");
+            req.setAttribute("authMethod", authMethod);
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
 
         } catch (VaultException e) {
             auditLog.record(AuditEntry.failure(
                     AuditEntry.OP_LOGIN,
-                    "/v1/auth/userpass/login/" + username,
+                    auditPath,
                     username.trim(),
                     e.getMessage()
             ));
             req.setAttribute("error", "連線 Vault 失敗：" + e.getMessage());
+            req.setAttribute("authMethod", authMethod);
             req.getRequestDispatcher("/WEB-INF/views/login.jsp").forward(req, resp);
         }
     }

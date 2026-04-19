@@ -34,7 +34,28 @@
     <div class="card card-md">
       <div class="card-body">
         <h2 class="h2 text-center mb-4">登入帳號</h2>
+
+        <%-- 認證方式切換 Tabs --%>
+        <c:set var="selectedMethod" value="${not empty authMethod ? authMethod : 'userpass'}"/>
+        <ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link ${selectedMethod == 'userpass' ? 'active' : ''}"
+                    id="tab-userpass" type="button" role="tab"
+                    onclick="selectAuth('userpass')">
+              <i class="bi bi-person-lock me-1"></i>Userpass
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link ${selectedMethod == 'ldap' ? 'active' : ''}"
+                    id="tab-ldap" type="button" role="tab"
+                    onclick="selectAuth('ldap')">
+              <i class="bi bi-diagram-3 me-1"></i>LDAP
+            </button>
+          </li>
+        </ul>
+
         <form method="post" action="${pageContext.request.contextPath}/login" autocomplete="off">
+          <input type="hidden" id="authMethod" name="authMethod" value="${selectedMethod}">
 
           <div class="mb-3">
             <label class="form-label" for="username">使用者名稱</label>
@@ -68,5 +89,12 @@
   </div>
 </div>
 <script src="${pageContext.request.contextPath}/static/js/tabler.min.js"></script>
+<script>
+  function selectAuth(method) {
+    document.getElementById('authMethod').value = method;
+    document.getElementById('tab-userpass').classList.toggle('active', method === 'userpass');
+    document.getElementById('tab-ldap').classList.toggle('active', method === 'ldap');
+  }
+</script>
 </body>
 </html>

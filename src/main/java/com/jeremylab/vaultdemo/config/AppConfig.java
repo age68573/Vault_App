@@ -35,12 +35,16 @@ public final class AppConfig {
     /** 向 Vault 發送 HTTP 請求的逾時秒數 */
     public static final int HTTP_TIMEOUT_SECONDS;
 
+    /** Vault LDAP 認證方法的掛載路徑（預設 ldap） */
+    public static final String VAULT_LDAP_PATH;
+
     static {
         VAULT_ADDR          = get("vault.addr",          "VAULT_ADDR",          "http://127.0.0.1:8200");
         VAULT_DB_ROLE       = get("vault.db.role",       "VAULT_DB_ROLE",       "mongo-role");
         VAULT_NAMESPACE     = get("vault.namespace",     "VAULT_NAMESPACE",     "");
         VAULT_SKIP_VERIFY   = Boolean.parseBoolean(
                                 get("vault.skip.verify", "VAULT_SKIP_VERIFY",   "false"));
+        VAULT_LDAP_PATH     = get("vault.ldap.path",     "VAULT_LDAP_PATH",     "ldap");
         MONGO_HOST          = get("mongo.host",          "MONGO_HOST",          "127.0.0.1");
         MONGO_DB_NAME       = get("mongo.db.name",       "MONGO_DB_NAME",       "vaultdemo");
         HTTP_TIMEOUT_SECONDS = Integer.parseInt(

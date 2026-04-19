@@ -61,6 +61,35 @@ public class VaultService {
     }
 
     /**
+     * 使用 Vault LDAP 認證方法登入，取得 Token。
+     * 呼叫 POST /v1/auth/{ldapPath}/login/{username}
+     *
+     * @param username Vault LDAP 使用者名稱
+     * @param password LDAP 密碼
+     * @return VaultToken 包含 client_token、TTL 及政策清單
+     * @throws VaultAuthException 若帳號或密碼錯誤
+     * @throws VaultException     其他 Vault API 錯誤
+     */
+    public VaultToken loginLdap(String username, String password) throws VaultException {
+        String path = "/v1/auth/" + AppConfig.VAULT_LDAP_PATH + "/login/" + username;
+        Map<String, String> bodyMap = new HashMap<>();
+        bodyMap.put("password", password);
+        String body = JsonUtil.toJson(bodyMap);
+
+        LOG.info("Vault LDAP 登入：使用者 '{}'", username);
+        String response = client.post(path, body, null);
+
+        Map<String, Object> json = JsonUtil.parseObject(response);
+        Map<String, Object> auth = JsonUtil.get(json, "auth");
+        if (auth == null) {
+            throw new VaultException("Vault LDAP 登入回應格式異常：找不到 auth 區塊");
+        }
+        VaultToken token = VaultToken.fromAuthBlock(auth);
+        LOG.info("Vault LDAP 登入成功：使用者 '{}'，accessor '{}'", username, token.getAccessor());
+        return token;
+    }
+
+    /**
      * 查詢目前 Token 的詳細資訊（更新剩餘 TTL）。
      * 呼叫 GET /v1/auth/token/lookup-self
      *

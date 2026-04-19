@@ -1,6 +1,8 @@
 package com.jeremylab.vaultdemo.model;
 
 import java.io.Serializable;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
 /**
@@ -42,6 +44,23 @@ public class LeaseInfo implements Serializable {
         info.issueTime  = (String) response.getOrDefault("issue_time", "");
         info.expireTime = (String) response.getOrDefault("expire_time", "");
         return info;
+    }
+
+    /**
+     * 計算原始租約總時長（秒），由 issueTime 與 expireTime 之差得出。
+     * 若時間戳記解析失敗，退回使用 ttl（此時進度條從 100% 起算）。
+     */
+    public long getTotalDurationSeconds() {
+        if (issueTime != null && !issueTime.isEmpty()
+                && expireTime != null && !expireTime.isEmpty()) {
+            try {
+                OffsetDateTime issue  = OffsetDateTime.parse(issueTime);
+                OffsetDateTime expire = OffsetDateTime.parse(expireTime);
+                long duration = ChronoUnit.SECONDS.between(issue, expire);
+                if (duration > 0) return duration;
+            } catch (Exception ignored) {}
+        }
+        return ttl > 0 ? ttl : 3600;
     }
 
     /** 判斷此 Lease 剩餘時間是否低於警戒值（60 秒）。 */

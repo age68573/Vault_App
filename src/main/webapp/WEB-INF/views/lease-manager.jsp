@@ -127,6 +127,8 @@
                         </c:otherwise>
                       </c:choose>
                       <div class="progress progress-sm">
+                        <c:set var="leaseTotalSec" value="${lease.totalDurationSeconds}"/>
+                        <c:set var="leaseInitPct"  value="${lease.ttl * 100 / (leaseTotalSec > 0 ? leaseTotalSec : 1)}"/>
                         <div id="leaseTtlBar_${ls.index}"
                              class="progress-bar
                                <c:choose>
@@ -134,7 +136,9 @@
                                  <c:when test='${lease.ttl > 60}'>bg-warning</c:when>
                                  <c:otherwise>bg-danger</c:otherwise>
                                </c:choose>"
-                             role="progressbar" data-total="${lease.ttl}" style="width:100%">
+                             role="progressbar"
+                             data-total="${leaseTotalSec}"
+                             style="width:${leaseInitPct}%">
                         </div>
                       </div>
                     </td>
